@@ -184,8 +184,9 @@ test('a suggested command changes the board and says it was scripted', async ({ 
   await expect(card(page, 'Revenue').first()).toBeVisible({ timeout: 15_000 });
   await expect(page.locator('code', { hasText: 'add_card(revenue)' })).toBeVisible();
 
-  // ...labelled honestly.
+  // ...labelled honestly, on screen and to a screen reader.
   await expect(page.getByText('Scripted demo — no model was called')).toBeVisible();
+  await expect(page.locator('[role="status"]')).toContainText(/no model was called/i);
 });
 
 test('a free-form prompt explains itself instead of pretending', async ({ page }) => {
@@ -194,8 +195,11 @@ test('a free-form prompt explains itself instead of pretending', async ({ page }
   await page.getByLabel(/Ask Dashboardius/).fill('plot the vibes of our quarterly synergy');
   await page.getByRole('button', { name: 'Run' }).click();
 
-  await expect(page.getByText(/understood the words, not the request/i)).toBeVisible();
-  await expect(page.getByText(/does not call one/i)).toBeVisible();
+  // The explanation appears twice on purpose: once in the visible panel, and
+  // once in the always-present live region so a screen reader hears it too.
+  await expect(page.locator('.trace').getByText(/understood the words, not the request/i)).toBeVisible();
+  await expect(page.locator('.trace').getByText(/does not call one/i)).toBeVisible();
+  await expect(page.locator('[role="status"]')).toContainText(/understood the words, not the request/i);
   expect(await page.locator('db-card-shell').count()).toBe(cardsBefore);
 });
 
@@ -222,6 +226,7 @@ test('reset restores the canonical demo board', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Product pulse' })).toBeVisible();
   await expect(page.locator('db-card-shell h3')).toHaveText(originalTitles);
   await expect(page.getByText(/Back to the original board/)).toBeVisible();
+  await expect(page.locator('[role="status"]')).toContainText(/Board reset/i);
   await expect(page.getByRole('button', { name: 'Reset' })).toBeDisabled();
 });
 
