@@ -1,0 +1,408 @@
+/* ===========================================================================
+   Dashboardius design system
+   ---------------------------------------------------------------------------
+   The look is an INSTRUMENT PANEL rendered as an editorial data desk: warm
+   paper by day, graphite by night, hairline rules, one deep teal accent, and
+   numbers that are allowed to be the biggest thing on screen.
+
+   Deliberately absent: gradients, glassmorphism, glow, neon, decorative grids.
+   The dashboard is the hero; nothing decorative competes with it.
+
+   Two colour systems live here and they never mix:
+     * CHROME  — --brand and the neutrals. Used for UI. Never a data mark.
+     * SERIES  — --series-1..8. Used only for data marks, so a chart colour can
+                 never be mistaken for a button and a button can never be
+                 mistaken for a series. The series ramp is the validated
+                 categorical palette (adjacent CVD ΔE ≥ 8 in both schemes);
+                 do not re-order or re-step it without re-validating.
+   ========================================================================= */
+
+:root {
+  color-scheme: light;
+
+  --paper: #f7f6f3;
+  --paper-sunken: #efede8;
+  --card: #ffffff;
+  --card-raised: #ffffff;
+  --ink: #15181d;
+  --ink-soft: #3d434c;
+  --ink-muted: #5c6470;
+  --ink-faint: #8b93a0;
+  --hairline: #e3e1dc;
+  --hairline-strong: #cfccc4;
+
+  /* The one brand accent. Chrome only — never a data mark. */
+  --brand: #0b7285;
+  --brand-hover: #096171;
+  --brand-active: #075263;
+  --brand-ink: #ffffff;
+  --brand-wash: #e6f3f6;
+  --brand-wash-strong: #cfe8ee;
+
+  --good: #0ca30c;
+  --warning: #fab219;
+  --critical: #d03b3b;
+
+  /* Validated categorical series palette — light steps. */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #4a3aa7;
+  --series-8: #e34948;
+
+  --shadow-card: 0 1px 2px rgba(21, 24, 29, 0.05), 0 1px 1px rgba(21, 24, 29, 0.03);
+  --shadow-lift: 0 12px 28px -12px rgba(21, 24, 29, 0.28), 0 2px 6px rgba(21, 24, 29, 0.06);
+  --shadow-drag: 0 24px 48px -16px rgba(21, 24, 29, 0.38);
+
+  --radius-card: 10px;
+  --radius-control: 6px;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Mono', Menlo,
+    Consolas, monospace;
+
+  --gutter: 14px;
+  --shell-max: 1600px;
+
+  --ease: cubic-bezier(0.2, 0, 0.13, 1);
+  --dur-fast: 120ms;
+  --dur: 200ms;
+  --dur-slow: 380ms;
+}
+
+@mixin dark-tokens {
+  color-scheme: dark;
+
+  --paper: #14161a;
+  --paper-sunken: #101216;
+  --card: #1b1e23;
+  --card-raised: #20242a;
+  --ink: #eceef1;
+  --ink-soft: #c8cdd5;
+  --ink-muted: #98a1ae;
+  --ink-faint: #6b7480;
+  --hairline: #2a2f37;
+  --hairline-strong: #39404a;
+
+  --brand: #26ceed;
+  --brand-hover: #8ee6f6;
+  --brand-active: #ddf4f9;
+  --brand-ink: #08303a;
+  --brand-wash: #10333c;
+  --brand-wash-strong: #164450;
+
+  --good: #0ca30c;
+  --warning: #fab219;
+  --critical: #d03b3b;
+
+  /* Same eight hues, re-stepped for the dark surface — not the light ramp
+     relabelled. Validated against #1b1e23. */
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-lift: 0 14px 32px -14px rgba(0, 0, 0, 0.75), 0 2px 6px rgba(0, 0, 0, 0.4);
+  --shadow-drag: 0 26px 52px -16px rgba(0, 0, 0, 0.85);
+}
+
+/* OS preference — loses to an explicit choice in either direction. */
+@media (prefers-color-scheme: dark) {
+  :root:where(:not(.db-light)) {
+    @include dark-tokens;
+  }
+}
+/* Explicit choice — wins both ways. */
+:root.db-dark {
+  @include dark-tokens;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 640;
+  letter-spacing: -0.011em;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--brand);
+  text-underline-offset: 2px;
+}
+
+button {
+  font: inherit;
+}
+
+/* Focus: one ring, everywhere, always visible on keyboard. */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.db-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.db-skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 100;
+  padding: 10px 16px;
+  background: var(--brand);
+  color: var(--brand-ink);
+  border-radius: var(--radius-control);
+  font-weight: 620;
+  transition: top var(--dur) var(--ease);
+
+  &:focus {
+    top: 12px;
+  }
+}
+
+/* --- Numerals ------------------------------------------------------------
+   Proportional figures on hero/stat numbers (tabular digits make a large
+   standalone number look loose); tabular only where digits stack. */
+.db-figure {
+  font-variant-numeric: proportional-nums;
+  letter-spacing: -0.03em;
+  font-weight: 660;
+}
+
+.db-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Reduced motion ------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- PrimeNG bridging ----------------------------------------------------
+   PrimeNG is in styled mode with the Dashboardius preset, so it already reads
+   our primary ramp and surfaces. These few rules cover what a preset cannot:
+   type scale inside overlays, and the checkable menu rows the chart card uses
+   for its metric picker. */
+.p-menu,
+.p-popover,
+.p-dialog {
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+
+.p-menu {
+  box-shadow: var(--shadow-lift);
+  border-color: var(--hairline);
+}
+
+.p-menu .p-menu-item-link {
+  padding: 0.42rem 0.6rem;
+  border-radius: 5px;
+  gap: 0.5rem;
+}
+
+.p-menu .p-menu-submenu-label {
+  padding: 0.5rem 0.6rem 0.25rem;
+  font-size: 10.5px;
+  font-weight: 680;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.p-menu-separator {
+  border-color: var(--hairline);
+}
+
+.p-dialog {
+  box-shadow: var(--shadow-drag);
+}
+
+.p-dialog .p-dialog-header {
+  padding: 1.1rem 1.25rem 0.5rem;
+}
+
+.p-dialog .p-dialog-title {
+  font-size: 17px;
+  font-weight: 660;
+  letter-spacing: -0.015em;
+}
+
+.p-toast {
+  font-family: var(--font-sans);
+}
+
+/* ===========================================================================
+   Grid cells — GLOBAL on purpose.
+   ---------------------------------------------------------------------------
+   Tabulator and AG Grid build their DOM at runtime, so a component's emulated
+   encapsulation never reaches these elements. Declaring them once here is what
+   makes a negative balance identical in all three engines: the engine chooses
+   the table, not what a value means.
+   ========================================================================= */
+
+.db-cell-empty {
+  color: var(--ink-faint);
+}
+
+.db-cell-number,
+.db-cell-amount {
+  font-variant-numeric: tabular-nums;
+}
+
+.db-cell-amount {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-weight: 560;
+}
+
+.db-cell-sign {
+  font-size: 8px;
+}
+
+/* A balance below zero. The tint is the fast signal; the minus sign and the
+   arrow are what carry it for anyone who cannot see the tint. */
+.db-cell-critical {
+  background: color-mix(in srgb, var(--critical) 14%, transparent) !important;
+  color: var(--critical) !important;
+  box-shadow: inset 2px 0 0 var(--critical);
+}
+
+/* Positive, but close enough to zero to be worth noticing. */
+.db-cell-warning {
+  background: color-mix(in srgb, var(--warning) 20%, transparent) !important;
+  color: var(--ink) !important;
+  box-shadow: inset 2px 0 0 var(--warning);
+}
+
+:root.db-dark .db-cell-warning,
+:root:not(.db-light) .db-cell-warning {
+  color: var(--ink) !important;
+}
+
+.db-cell-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+}
+
+.db-cell-progress-track {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 34px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--paper-sunken);
+  overflow: hidden;
+}
+
+.db-cell-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--brand);
+  transition: width var(--dur) var(--ease);
+}
+
+.db-cell-progress-value {
+  flex: none;
+  min-width: 30px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  color: var(--ink-muted);
+}
+
+.db-cell-bool {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+}
+
+.db-cell-bool.is-on {
+  color: var(--good);
+}
+
+.db-cell-bool.is-off {
+  color: var(--ink-faint);
+}
+
+.db-cell-gender {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.db-cell-gender-glyph {
+  display: inline-grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--paper-sunken);
+  color: var(--ink-muted);
+  font-size: 11px;
+  line-height: 1;
+}
+
+.db-cell-gender-label {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+
+.db-cell-date {
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}

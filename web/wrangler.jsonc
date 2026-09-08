@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dashboardius",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+
+  // The Worker is authoritative for every request (run_worker_first), because
+  // /__/auth/* has to be proxied before Cloudflare can decide it is a 404, and
+  // because an unknown path has to reach the SPA shell rather than an asset
+  // 404 page. See worker.js.
+  "main": "worker.js",
+  "assets": {
+    "directory": "./dist/dashboardius/browser",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    "not_found_handling": "none"
+  },
+
+  // APEX CUSTOM DOMAIN. Cloudflare manages the proxied DNS record and the TLS
+  // certificate. Attaching a custom domain needs a token with Zone:DNS:Edit —
+  // a Workers-only token cannot create one — so this is a one-time dashboard
+  // step; after that CI keeps the Worker in sync. `www` is deliberately NOT a
+  // second custom domain (that would serve duplicate content); worker.js 301s
+  // it to the apex instead.
+  "routes": [{ "pattern": "dashboardius.com", "custom_domain": true }]
+}

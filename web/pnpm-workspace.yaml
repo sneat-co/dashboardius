@@ -1,0 +1,13 @@
+packages:
+  - '.'
+
+# Postinstall scripts, listed explicitly so a new transitive dependency cannot
+# silently run one. Only esbuild's is actually needed (the Angular builder);
+# every other is declined.
+allowBuilds:
+  '@firebase/util': false
+  '@parcel/watcher': false
+  esbuild: true
+  lmdb: false
+  msgpackr-extract: false
+  protobufjs: false

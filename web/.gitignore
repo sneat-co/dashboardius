@@ -1,0 +1,8 @@
+node_modules/
+dist/
+out-tsc/
+.angular/
+.wrangler/
+test-results/
+playwright-report/
+*.log
