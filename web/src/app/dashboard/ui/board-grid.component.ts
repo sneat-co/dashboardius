@@ -263,6 +263,9 @@ export class BoardGridComponent {
               : 'smooth',
             block: 'nearest',
           });
+          // The arrival highlight is a one-off announcement, not a state the
+          // card stays in. Cleared once the animation has had time to run.
+          setTimeout(() => this.store.clearArrived(), 600);
         },
         { injector: this.injector },
       );
