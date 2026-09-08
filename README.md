@@ -165,6 +165,26 @@ brand hex by `scripts/generate-primeng-palette.mjs`. Surfaces, radii, focus ring
 and type scale are re-pointed at the same CSS custom properties the hand-built
 chrome uses — which is what keeps it from looking like an Aura demo.
 
+### Performance
+
+The homepage is prerendered, so first paint does not wait for JavaScript, and
+every chart card reserves its height before it draws — measured cumulative layout
+shift is **0**.
+
+What ships when:
+
+| Chunk | Raw | When it loads |
+| --- | --- | --- |
+| initial | ~827 kB (~185 kB transferred) | immediately — Angular, PrimeNG's styled runtime, CDK drag-drop, the board |
+| Chart.js | ~208 kB | when the first chart scrolls into view (prefetched on idle) |
+| Firebase auth | ~162 kB | on an idle callback after first paint, or on demand at sign-in |
+| Tabulator | ~450 kB | only if a visitor switches the query card to it |
+| AG Grid | ~1.2 MB | only if a visitor switches the query card to it |
+
+The two grid libraries are the reason the engine switch is worth having as a
+*deferred* choice rather than a bundled one: neither is downloaded by a visitor
+who never opens that menu.
+
 ---
 
 ## Deployment
