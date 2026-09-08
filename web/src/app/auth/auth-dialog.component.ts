@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, model, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  model,
+  output,
+  signal,
+  untracked,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Dialog } from 'primeng/dialog';
 
@@ -28,6 +38,7 @@ export type AuthIntent = 'sign-up' | 'sign-in';
       [draggable]="false"
       [resizable]="false"
       [dismissableMask]="true"
+      closeAriaLabel="Close sign-in"
       [style]="{ width: 'min(94vw, 400px)' }"
       [header]="isSignUp() ? 'Join the sample size' : 'Welcome back'"
     >
@@ -121,7 +132,7 @@ export type AuthIntent = 'sign-up' | 'sign-in';
       gap: 9px;
       width: 100%;
       min-height: 40px;
-      border: 1px solid var(--hairline-strong);
+      border: 1px solid var(--control-border);
       border-radius: var(--radius-control);
       background: var(--card);
       color: var(--ink);
@@ -191,7 +202,7 @@ export type AuthIntent = 'sign-up' | 'sign-in';
     input {
       min-height: 38px;
       padding: 0 10px;
-      border: 1px solid var(--hairline-strong);
+      border: 1px solid var(--control-border);
       border-radius: var(--radius-control);
       background: var(--card);
       color: var(--ink);
@@ -272,6 +283,8 @@ export type AuthIntent = 'sign-up' | 'sign-in';
 export class AuthDialogComponent {
   readonly open = model.required<boolean>();
   readonly intent = model.required<AuthIntent>();
+  /** Fires however the dialog was dismissed — Escape, close button, or mask. */
+  readonly closed = output<void>();
 
   protected readonly auth = inject(AuthService);
   protected readonly email = signal('');
@@ -286,13 +299,21 @@ export class AuthDialogComponent {
 
   constructor() {
     effect(() => {
-      // Reopening should never show the last attempt's failure.
-      if (this.open()) {
-        this.auth.clearError();
-        this.notice.set(null);
-      }
+      const open = this.open();
+      untracked(() => {
+        // Reopening should never show the last attempt's failure.
+        if (open) {
+          this.auth.clearError();
+          this.notice.set(null);
+        } else if (this.wasOpen) {
+          this.closed.emit();
+        }
+        this.wasOpen = open;
+      });
     });
   }
+
+  private wasOpen = false;
 
   protected google(): void {
     void this.auth.signInWithGoogle();

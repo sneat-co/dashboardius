@@ -27,7 +27,10 @@
   --ink: #15181d;
   --ink-soft: #3d434c;
   --ink-muted: #5c6470;
-  --ink-faint: #8b93a0;
+  /* Solved for 4.5:1 against card, paper AND paper-sunken — it labels real
+     text (badges, breadcrumbs, card notes, footer headings), so the large-text
+     allowance does not apply to it. */
+  --ink-faint: #636b79;
   --hairline: #e3e1dc;
   --hairline-strong: #cfccc4;
 
@@ -39,9 +42,26 @@
   --brand-wash: #e6f3f6;
   --brand-wash-strong: #cfe8ee;
 
+  /* Status MARKS keep the reserved status palette unchanged. */
   --good: #0ca30c;
   --warning: #fab219;
   --critical: #d03b3b;
+
+  /* Status TEXT is a separate token, because a mark only has to be visible and
+     a word has to be readable: the reserved status hues do not all clear 4.5:1
+     as text, and re-stepping the marks instead would break the status palette
+     other things depend on. */
+  --good-text: #097d09;
+  /* Clears 4.5:1 against the card, the paper, the sunken paper AND the 14%
+     critical tint the negative-balance cells paint behind it — the tint is the
+     tightest of the four, so solving only against the card leaves the one
+     place this token is most used just short. */
+  --critical-text: #c42f2f;
+
+  /* The boundary of an interactive control, at 3:1 — a form field or a button
+     whose only edge is a hairline is a control a low-vision user cannot find.
+     --hairline-strong stays decorative and stays quiet. */
+  --control-border: #6f7684;
 
   /* Validated categorical series palette — light steps. */
   --series-1: #2a78d6;
@@ -84,7 +104,7 @@
   --ink: #eceef1;
   --ink-soft: #c8cdd5;
   --ink-muted: #98a1ae;
-  --ink-faint: #6b7480;
+  --ink-faint: #7d8692;
   --hairline: #2a2f37;
   --hairline-strong: #39404a;
 
@@ -98,6 +118,11 @@
   --good: #0ca30c;
   --warning: #fab219;
   --critical: #d03b3b;
+
+  --good-text: #0ca30c;
+  --critical-text: #db6b6b;
+
+  --control-border: #7d8692;
 
   /* Same eight hues, re-stepped for the dark surface — not the light ramp
      relabelled. Validated against #1b1e23. */
@@ -314,7 +339,7 @@ button {
    arrow are what carry it for anyone who cannot see the tint. */
 .db-cell-critical {
   background: color-mix(in srgb, var(--critical) 14%, transparent) !important;
-  color: var(--critical) !important;
+  color: var(--critical-text) !important;
   box-shadow: inset 2px 0 0 var(--critical);
 }
 
@@ -372,7 +397,7 @@ button {
 }
 
 .db-cell-bool.is-on {
-  color: var(--good);
+  color: var(--good-text);
 }
 
 .db-cell-bool.is-off {

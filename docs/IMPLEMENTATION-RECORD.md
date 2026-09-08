@@ -159,7 +159,57 @@ argument for the browser suite existing.
 
 ---
 
-## 6. Deliberately not built
+## 6. Accessibility
+
+Audited after the first deploy, with the findings fixed and each fix verified in
+a browser rather than assumed. Worth recording because two of them were
+invisible to reading the code:
+
+- **The dark surface ramp was inverted.** The preset declared the dark
+  `surface` scale darkest-first (`0: #1b1e23 … 950: #f7f8fa`). Aura's dark
+  tokens reach for `{surface.900}` to paint an overlay, so they were handed
+  near-white: every popover and dialog flashed a bright panel over a dark page.
+  A colour SCHEME chooses which end of a ramp to use; the ramp itself always
+  runs light to dark. Only reproducible through the in-app theme toggle — under
+  an OS dark preference the tokens resolved from the light scheme and looked
+  fine.
+- **A live region that did not exist yet.** The command trace and the reset
+  notice carried `role="status"` but were rendered only while visible, and a
+  live region has to be in the DOM before its text changes or nothing is
+  announced. There is now one permanently-rendered polite region that every
+  board change writes a sentence into.
+- **Focus was dropped on `<body>`** when the auth dialog closed, by any of its
+  three close paths. The opener is now remembered and refocused.
+- **PrimeNG's dialog close button had no accessible name** — an `aria-hidden`
+  icon and nothing else. Named via the component's own `closeAriaLabel`.
+- **Single-select menu groups announced as checkboxes.** Grid engine, chart
+  shape and card width are one-of-many, and `menuitemcheckbox` does not merely
+  under-describe them, it says pressing one leaves the others alone. They are
+  `menuitemradio` now; only the genuinely independent Metrics and Table view
+  entries stayed checkboxes.
+- **Two missing landmarks.** The masthead was a `<div>` (no `banner`), and the
+  site footer sat inside `<main>`, where HTML-AAM does not expose `contentinfo`.
+- **Contrast.** `--ink-faint` failed 4.5:1 in both schemes and is used on a
+  great many labels; the up/down delta colours failed as text. Status *marks*
+  keep the reserved status palette, and status *text* now has its own tokens
+  solved against every surface it lands on — including the 14% tint behind a
+  negative balance, which is the tightest of them and the one a card-only
+  calculation misses. Interactive control boundaries got a dedicated 3:1
+  `--control-border`, rather than darkening every decorative hairline.
+
+Three light-mode series colours sit below 3:1 against the card surface. That is
+a known, documented property of the validated categorical palette, whose
+prescribed relief is a real table view — which every chart card has, in the card
+menu and always present for assistive technology. Re-stepping those three would
+require re-validating the whole ramp's colourblind separation, so the palette is
+left as validated and the relief is the mitigation.
+
+Not covered: real screen-reader sessions, voice control, and Windows forced-colors
+mode. Those need a human and a real AT.
+
+---
+
+## 7. Deliberately not built
 
 Real dashboard persistence, GitHub save / repo creation / repo selection,
 production analytics, DataTug query authoring, dashboard permissions,
@@ -173,7 +223,7 @@ build.
 
 ---
 
-## 7. Known gaps and follow-ups
+## 8. Known gaps and follow-ups
 
 1. **PrimeUI licence key.** PrimeNG 21+ ships under the PrimeUI licence and
    injects a "license not configured" banner without a key. The build wires

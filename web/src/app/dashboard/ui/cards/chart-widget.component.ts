@@ -79,7 +79,9 @@ import {
               <span class="swatch" [style.background]="s.visible ? color(s.slot) : 'transparent'"
                     [style.border-color]="color(s.slot)"></span>
               <span>{{ s.label }}</span>
-              <span class="db-visually-hidden">{{ s.visible ? '— shown, click to hide' : '— hidden, click to show' }}</span>
+              <!-- Leading space: without it the accessible name reads
+                   "Sign-ups— shown", with the label and its state run together. -->
+              <span class="db-visually-hidden">{{ s.visible ? ' — shown, click to hide' : ' — hidden, click to show' }}</span>
             </button>
           </li>
         }
@@ -176,11 +178,11 @@ import {
     }
 
     .delta.is-up {
-      color: var(--good);
+      color: var(--good-text);
     }
 
     .delta.is-down {
-      color: var(--critical);
+      color: var(--critical-text);
     }
 
     .hero-label {

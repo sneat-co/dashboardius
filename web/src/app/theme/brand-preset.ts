@@ -87,19 +87,27 @@ export const DashboardiusPreset = definePreset(Aura, {
           hoverColor: DARK_PRIMARY_RAMP[300],
           activeColor: DARK_PRIMARY_RAMP[200],
         },
+        // ORIENTED LIGHT → DARK, exactly like the light scheme's ramp.
+        //
+        // This was inverted, and the bug it caused was invisible until someone
+        // opened a menu: Aura's dark tokens reach for {surface.900} to paint an
+        // overlay, so an inverted ramp handed them #eceef1 — near-white — and
+        // every popover and dialog flashed a bright panel over a dark page.
+        // The COLOUR SCHEME picks which end of a ramp to use; the ramp itself
+        // always runs light to dark.
         surface: {
-          0: '#1b1e23',
-          50: '#20242a',
-          100: '#262b32',
-          200: '#2a2f37',
-          300: '#39404a',
-          400: '#4d5560',
+          0: '#ffffff',
+          50: '#f7f8fa',
+          100: '#eceef1',
+          200: '#d5dae1',
+          300: '#b9c0ca',
+          400: '#98a1ae',
           500: '#6b7480',
-          600: '#98a1ae',
-          700: '#b9c0ca',
-          800: '#d5dae1',
-          900: '#eceef1',
-          950: '#f7f8fa',
+          600: '#4d5560',
+          700: '#39404a',
+          800: '#2a2f37',
+          900: '#1b1e23',
+          950: '#14161a',
         },
         content: { background: '#1b1e23', borderColor: '#2a2f37' },
         text: { color: '#eceef1', mutedColor: '#98a1ae' },

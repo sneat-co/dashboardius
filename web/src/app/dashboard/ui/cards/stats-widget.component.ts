@@ -129,11 +129,11 @@ import { SPARK_OPTIONS, buildSparkData, seriesColor } from '../../charts/chart-o
     }
 
     .delta.is-up {
-      color: var(--good);
+      color: var(--good-text);
     }
 
     .delta.is-down {
-      color: var(--critical);
+      color: var(--critical-text);
     }
 
     .tile-note {

@@ -16,7 +16,9 @@ import { ThemeService } from '../../theme/theme.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="inner">
+    <!-- A real <header>: the masthead is the page's banner landmark, and
+         without it the page offered exactly one landmark to jump between. -->
+    <header class="inner">
       <h1 class="wordmark">
         <span class="mark" aria-hidden="true">
           <svg viewBox="0 0 22 22" focusable="false">
@@ -76,7 +78,7 @@ import { ThemeService } from '../../theme/theme.service';
           <span class="account-pending" aria-hidden="true"></span>
         }
       }
-    </div>
+    </header>
   `,
   styles: `
     :host {

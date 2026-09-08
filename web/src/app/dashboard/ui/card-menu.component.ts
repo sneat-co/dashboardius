@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Popover } from 'primeng/popover';
 
-import { CardMenuGroup } from './card-menu.model';
+import { CardMenuEntry, CardMenuGroup } from './card-menu.model';
 
 /**
  * A card's menu.
@@ -49,7 +49,7 @@ import { CardMenuGroup } from './card-menu.model';
       <div class="menu" role="menu" [attr.aria-label]="cardTitle() + ' options'" (keydown)="onKeydown($event)">
         @for (group of groups(); track group.id) {
           @if (group.label) {
-            <p class="group-label">{{ group.label }}</p>
+            <p class="group-label" [id]="'grp-' + group.id">{{ group.label }}</p>
           }
           @for (entry of group.entries; track entry.id) {
             <button
@@ -57,7 +57,7 @@ import { CardMenuGroup } from './card-menu.model';
               class="entry"
               [class.is-danger]="entry.danger"
               [class.is-checked]="entry.checked"
-              [attr.role]="entry.checked === undefined ? 'menuitem' : 'menuitemcheckbox'"
+              [attr.role]="roleFor(group, entry)"
               [attr.aria-checked]="entry.checked === undefined ? null : entry.checked"
               [disabled]="entry.disabled"
               (click)="choose(entry.id)"
@@ -225,6 +225,12 @@ export class CardMenuComponent {
 
   private readonly popover = viewChild.required<Popover>('popover');
   private readonly trigger = viewChild.required<ElementRef<HTMLButtonElement>>('trigger');
+
+  /** Plain item, one-of-many radio, or independent checkbox. */
+  protected roleFor(group: CardMenuGroup, entry: CardMenuEntry): string {
+    if (entry.checked === undefined) return 'menuitem';
+    return group.singleSelect ? 'menuitemradio' : 'menuitemcheckbox';
+  }
 
   protected toggle(event: Event): void {
     this.popover().toggle(event);

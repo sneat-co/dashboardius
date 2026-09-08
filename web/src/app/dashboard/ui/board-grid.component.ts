@@ -357,6 +357,7 @@ export class BoardGridComponent {
       groups.push({
         id: 'engine',
         label: 'Grid',
+        singleSelect: true,
         entries: GRID_ENGINES.map((engine) => ({
           id: `engine:${engine}`,
           label: GRID_ENGINE_LABELS[engine],
@@ -378,6 +379,9 @@ export class BoardGridComponent {
       });
       groups.push({
         id: 'kind',
+        // Shape is one-of; the table view inside it is an independent toggle,
+        // so it lives in its own group rather than being announced as a radio.
+        singleSelect: true,
         label: 'Shape',
         entries: [
           { id: 'kind:area', label: 'Area', checked: widget.data.kind === 'area' },
@@ -391,14 +395,18 @@ export class BoardGridComponent {
             disabled: widget.data.series.filter((s) => s.visible).length !== 1,
             hint: widget.data.series.filter((s) => s.visible).length !== 1 ? 'one metric only' : undefined,
           },
-          { id: 'table', label: 'Table', checked: this.tableViews().has(card.id) },
         ],
+      });
+      groups.push({
+        id: 'view',
+        entries: [{ id: 'table', label: 'Table view', checked: this.tableViews().has(card.id) }],
       });
     }
 
     groups.push({
       id: 'size',
       label: 'Width',
+      singleSelect: true,
       entries: CARD_SPANS.map((s) => ({
         id: `size:${s}`,
         label: s === 12 ? 'Full width' : `${s} of 12`,

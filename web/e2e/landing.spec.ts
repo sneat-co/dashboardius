@@ -61,6 +61,21 @@ test('a hidden metric can be added from the chart legend', async ({ page }) => {
   await expect(hidden).toBeVisible();
 });
 
+test('single-select menu groups are radios, multi-select are checkboxes', async ({ page }) => {
+  const menu = await cardMenu(page, 'Members');
+  // Grid engine and width pick one of many...
+  await expect(menu.getByRole('menuitemradio', { name: 'Tabulator' })).toBeVisible();
+  await expect(menu.getByRole('menuitemradio', { name: 'Full width' })).toBeVisible();
+  // ...so a checkbox role would say the wrong thing about what pressing them does.
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Tabulator' })).toHaveCount(0);
+
+  await page.keyboard.press('Escape');
+  const chart = await cardMenu(page, 'Sign-ups');
+  // Metrics really do toggle independently.
+  await expect(chart.getByRole('menuitemcheckbox', { name: /Returning users/ })).toBeVisible();
+  await expect(chart.getByRole('menuitemcheckbox', { name: 'Table view' })).toBeVisible();
+});
+
 test('a hidden metric can be added from the card menu', async ({ page }) => {
   const menu = await cardMenu(page, 'Sign-ups');
   const returning = menu.getByRole('menuitemcheckbox', { name: /Returning users/ });
@@ -78,11 +93,11 @@ test('a card can be resized and removed from its menu', async ({ page }, testInf
   const before = await card(page, 'Meetings').first().boundingBox();
 
   let menu = await cardMenu(page, 'Meetings');
-  await menu.getByRole('menuitemcheckbox', { name: 'Full width' }).click();
+  await menu.getByRole('menuitemradio', { name: 'Full width' }).click();
 
   // The new width is recorded whatever the viewport...
   menu = await cardMenu(page, 'Meetings');
-  await expect(menu.getByRole('menuitemcheckbox', { name: 'Full width' })).toHaveAttribute(
+  await expect(menu.getByRole('menuitemradio', { name: 'Full width' })).toHaveAttribute(
     'aria-checked',
     'true',
   );
@@ -161,7 +176,7 @@ test('the query card switches grid engine and keeps the same values', async ({ p
 
   for (const engine of ['Tabulator', 'AG Grid']) {
     const menu = await cardMenu(page, 'Members');
-    await menu.getByRole('menuitemcheckbox', { name: engine }).click();
+    await menu.getByRole('menuitemradio', { name: engine }).click();
     await expect(members.getByText(engine, { exact: true })).toBeVisible();
 
     if (wide) {

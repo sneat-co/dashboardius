@@ -13,5 +13,15 @@ export interface CardMenuEntry {
 export interface CardMenuGroup {
   readonly id: string;
   readonly label?: string;
+  /**
+   * True when exactly one entry in the group can be chosen — grid engine,
+   * chart shape, card width.
+   *
+   * It changes the ARIA role from `menuitemcheckbox` to `menuitemradio`, which
+   * is the difference between "these toggle independently" and "picking one
+   * drops the last". A checkbox role on a radio group does not merely
+   * under-describe the control, it actively misdescribes what pressing it does.
+   */
+  readonly singleSelect?: boolean;
   readonly entries: readonly CardMenuEntry[];
 }

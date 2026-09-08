@@ -106,14 +106,16 @@ import { SiteFooterComponent } from './site-footer.component';
           </p>
         }
       </div>
-
-      <db-site-footer />
     </main>
+
+    <!-- Outside <main> on purpose: per the HTML-AAM mapping a <footer> that is
+         a descendant of main is NOT exposed as a contentinfo landmark. -->
+    <db-site-footer />
 
     <!-- Deferred: PrimeNG's Dialog and the sign-in form are ~80 kB that a
          visitor who never signs in should not download to look at a board. -->
     @defer (when authRequested()) {
-      <db-auth-dialog [(open)]="authOpen" [(intent)]="authIntent" />
+      <db-auth-dialog [(open)]="authOpen" [(intent)]="authIntent" (closed)="onAuthClosed()" />
     }
   `,
   styles: `
@@ -363,10 +365,27 @@ export class DashboardPageComponent {
     setTimeout(() => this.resetNotice.set(false), 5200);
   }
 
+  /**
+   * Remembers what opened the auth dialog so focus can go back there.
+   *
+   * Without this, closing the dialog — by Escape, by the close button, or by
+   * clicking the mask — drops focus on <body>, and the next Tab restarts the
+   * page from the top instead of continuing from the button the visitor
+   * pressed. That loses a keyboard user's place completely.
+   */
+  private authOpener?: HTMLElement;
+
   protected openAuth(intent: AuthIntent): void {
     this.authIntent.set(intent);
     this.authRequested.set(true);
+    const active = this.doc.activeElement;
+    this.authOpener = active instanceof HTMLElement ? active : undefined;
     this.authOpen.set(true);
+  }
+
+  protected onAuthClosed(): void {
+    this.authOpener?.focus();
+    this.authOpener = undefined;
   }
 
   /** A card footer button asked for something. */
