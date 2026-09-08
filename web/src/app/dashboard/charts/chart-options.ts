@@ -26,6 +26,7 @@ import { ThemeTokens } from '../../theme/theme.service';
 export const visibleSeries = (data: IChartWidgetData): readonly ISeriesDef[] =>
   data.series.filter((s) => s.visible);
 
+/** The counterpart: metrics the card knows about but is not currently drawing. */
 export const hiddenSeries = (data: IChartWidgetData): readonly ISeriesDef[] =>
   data.series.filter((s) => !s.visible);
 

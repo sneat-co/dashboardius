@@ -286,3 +286,24 @@ describe('findRowOfCard', () => {
     expect(findRowOfCard(DEMO_BOARD, 'no-such-card')).toBeUndefined();
   });
 });
+
+describe('new row ids', () => {
+  it('never collides with a row that still exists', () => {
+    // row-2 pruned, so a naive `row-${rows.length + 1}` would re-use row-3.
+    const board: IBoardDef = {
+      id: 'b',
+      title: 'b',
+      rows: [
+        { id: 'row-1', cards: [] },
+        { id: 'row-3', cards: [] },
+      ],
+    };
+    const result = applyAction(board, {
+      type: 'add-card',
+      cardId: 'revenue',
+      rowId: 'nowhere',
+    });
+    const ids = result.rows!.map((r) => r.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+});

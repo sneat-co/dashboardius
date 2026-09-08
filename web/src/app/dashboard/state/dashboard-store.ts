@@ -51,11 +51,6 @@ export class DashboardStore {
    */
   readonly announcement = signal('');
 
-  /** Every card id currently on the board — used to answer "is it already here?". */
-  readonly cardIds = computed(
-    () => new Set((this.present().rows ?? []).flatMap((r) => (r.cards ?? []).map((c) => c.id))),
-  );
-
   /**
    * Apply a plan and push the previous board onto the undo stack.
    *

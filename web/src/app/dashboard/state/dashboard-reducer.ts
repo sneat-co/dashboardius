@@ -117,7 +117,7 @@ function addCard(
   const rows = rowsOf(board);
   const targetRowId = rowId ?? rows[0]?.id;
   if (!targetRowId || !rows.some((r) => r.id === targetRowId)) {
-    return { ...board, rows: [...rows, { id: `row-${rows.length + 1}`, cards: [card] }] };
+    return { ...board, rows: [...rows, { id: nextRowId(rows), cards: [card] }] };
   }
 
   return mapRows(board, (row) => {
@@ -157,6 +157,20 @@ function moveCard(
   });
 
   return pruneEmptyRows({ ...board, rows });
+}
+
+/**
+ * A fresh row id that no existing row is using.
+ *
+ * Counting rows is not enough: prune one from the middle and `row-${n+1}` can
+ * collide with a row that is still there, which would make two rows
+ * indistinguishable to every lookup and to Angular's track expression.
+ */
+function nextRowId(rows: readonly IBoardRowDef[]): string {
+  const taken = new Set(rows.map((row) => row.id));
+  let n = rows.length + 1;
+  while (taken.has(`row-${n}`)) n++;
+  return `row-${n}`;
 }
 
 /**
