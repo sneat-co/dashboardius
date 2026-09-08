@@ -4,6 +4,13 @@ packages:
 # Postinstall scripts, listed explicitly so a new transitive dependency cannot
 # silently run one. Only esbuild's is actually needed (the Angular builder);
 # every other is declined.
+#
+# `workerd` matters beyond hygiene: an UNLISTED build script is a hard install
+# failure here, and cloudflare/wrangler-action falls back to `pnpm add wrangler@4`
+# when it cannot find a local wrangler — which pulled workerd in and failed the
+# deploy. Wrangler is a pinned devDependency for the same reason: the action
+# finds it, skips its own install, and the deployed toolchain is the one this
+# repository chose rather than whatever `@4` resolves to that morning.
 allowBuilds:
   '@firebase/util': false
   '@parcel/watcher': false
@@ -11,3 +18,4 @@ allowBuilds:
   lmdb: false
   msgpackr-extract: false
   protobufjs: false
+  workerd: false
