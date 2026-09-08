@@ -82,6 +82,10 @@ import { DataGridComponent } from './data-grid.component';
       height: 322px;
       min-height: 322px;
       overflow: hidden;
+      /* The plain table is taller than the card, so the last visible row is
+         always a partial one. The fade says "there is more" instead of leaving
+         a row that looks broken off. */
+      mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent);
     }
 
     .meta {

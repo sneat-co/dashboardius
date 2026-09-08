@@ -103,6 +103,39 @@ test('a card can be resized and removed from its menu', async ({ page }, testInf
   await expect(card(page, 'Meetings')).toHaveCount(0);
 });
 
+test('a card can be dragged to a new position', async ({ page }, testInfo) => {
+  // Below the stacking breakpoint the row is one column wide, so a horizontal
+  // drop target does not exist. The keyboard path (next test) is what covers
+  // reordering there.
+  test.skip((testInfo.project.use.viewport?.width ?? 1280) <= 900, 'single-column layout');
+
+  const row = page.locator('.row').first();
+  const titles = () => row.locator('db-card-shell h3').allInnerTexts();
+  const before = await titles();
+
+  const handle = row.locator('.cell').nth(0).locator('.head');
+  const target = row.locator('.cell').nth(1);
+  const from = (await handle.boundingBox())!;
+  const to = (await target.boundingBox())!;
+
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  await page.mouse.down();
+  // The CDK needs several intermediate moves before it treats this as a drag.
+  const endX = to.x + to.width * 0.7;
+  for (let i = 1; i <= 12; i++) {
+    await page.mouse.move(
+      from.x + from.width / 2 + (endX - (from.x + from.width / 2)) * (i / 12),
+      from.y + from.height / 2 + 4,
+    );
+  }
+  await page.mouse.up();
+
+  await expect.poll(titles).toEqual([before[1], before[0]]);
+  // ...and a drag is undoable like everything else.
+  await page.getByRole('button', { name: 'Undo' }).click();
+  await expect.poll(titles).toEqual(before);
+});
+
 test('a card can be moved by keyboard as well as by drag', async ({ page }) => {
   const row = page.locator('.row').nth(2);
   const titles = async () => row.locator('db-card-shell h3').allInnerTexts();
