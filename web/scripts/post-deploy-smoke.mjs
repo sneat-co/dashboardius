@@ -11,6 +11,30 @@
  */
 const base = (process.argv[2] ?? 'https://dashboardius.com').replace(/\/$/, '');
 
+/**
+ * The very first deploy attaches the custom domain moments before this runs, so
+ * the runner's resolver has not seen the record yet and every check fails on
+ * DNS rather than on anything about the site. Wait for the name to resolve
+ * before concluding the deploy is broken — but bound the wait, because a name
+ * that never resolves IS a broken deploy.
+ */
+async function waitForDns(attempts = 10) {
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      await fetch(base + '/', { method: 'HEAD' });
+      return;
+    } catch (err) {
+      const dns = String(err?.cause?.code ?? '') === 'ENOTFOUND';
+      if (!dns || i === attempts) return; // let the real checks report it
+      const wait = Math.min(30_000, 2_000 * 2 ** (i - 1));
+      console.log(`…${base} does not resolve yet; retrying in ${wait / 1000}s (${i}/${attempts})`);
+      await new Promise((r) => setTimeout(r, wait));
+    }
+  }
+}
+
+await waitForDns();
+
 const failures = [];
 const check = (label, ok) => {
   console.log(`${ok ? 'ok  ' : 'FAIL'}  ${label}`);

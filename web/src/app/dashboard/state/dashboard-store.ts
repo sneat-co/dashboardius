@@ -41,6 +41,16 @@ export class DashboardStore {
 
   readonly command = signal<CommandRun>(IDLE);
 
+  /**
+   * What a screen reader is told about the board.
+   *
+   * A live region has to be in the DOM BEFORE its text changes, or the change
+   * is not announced — so this is a plain string that a permanently-rendered
+   * region reads, rather than a message attached to a panel that appears at the
+   * same moment it would need to be read.
+   */
+  readonly announcement = signal('');
+
   /** Every card id currently on the board — used to answer "is it already here?". */
   readonly cardIds = computed(
     () => new Set((this.present().rows ?? []).flatMap((r) => (r.cards ?? []).map((c) => c.id))),
@@ -66,6 +76,7 @@ export class DashboardStore {
     this.arrived.set(
       actions.filter((a) => a.type === 'add-card').map((a) => a.cardId),
     );
+    this.announce(summarise(actions));
   }
 
   undo(): void {
@@ -76,6 +87,7 @@ export class DashboardStore {
     this.future.update((f) => [this.present(), ...f]);
     this.present.set(previous);
     this.arrived.set([]);
+    this.announce('Undone.');
   }
 
   redo(): void {
@@ -84,6 +96,7 @@ export class DashboardStore {
     this.past.update((p) => [...p, this.present()].slice(-HISTORY_LIMIT));
     this.present.set(future[0]);
     this.future.set(future.slice(1));
+    this.announce('Redone.');
   }
 
   /** Back to the canonical demo board, history cleared. The safety net. */
@@ -93,6 +106,7 @@ export class DashboardStore {
     this.present.set(DEMO_BOARD);
     this.arrived.set([]);
     this.command.set(IDLE);
+    this.announce('Board reset to the original demo.');
   }
 
   clearArrived(): void {
@@ -126,6 +140,9 @@ export class DashboardStore {
         steps: [],
         scripted: false,
       });
+      this.announce(
+        'Dashboardius understood the words, not the request. Free-form prompts are not wired up on this demo.',
+      );
       return;
     }
 
@@ -149,10 +166,21 @@ export class DashboardStore {
       reply: known.reply,
       scripted: true,
     });
+    this.announce(`${known.reply} Scripted demo; no model was called.`);
   }
 
   dismissCommand(): void {
     this.command.set(IDLE);
+  }
+
+  /**
+   * Re-announce even when the text is unchanged: running the same command twice
+   * should be audible twice, and an identical string would not re-trigger the
+   * live region on its own.
+   */
+  private announce(message: string): void {
+    if (this.announcement() === message) this.announcement.set('');
+    queueMicrotask(() => this.announcement.set(message));
   }
 
   private async typeOut(text: string): Promise<void> {
@@ -165,6 +193,12 @@ export class DashboardStore {
     }
     await pause(140);
   }
+}
+
+/** A one-line description of what a plan did, for the live region. */
+function summarise(actions: readonly DashboardAction[]): string {
+  if (actions.length === 1) return `${describeAction(actions[0])} applied.`;
+  return `${actions.length} changes applied to the board.`;
 }
 
 const pause = (ms: number): Promise<void> =>

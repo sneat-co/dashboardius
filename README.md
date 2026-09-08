@@ -200,15 +200,16 @@ Firebase's auth handler, and serves the prerendered app under one canonical host
 | --- | --- | --- |
 | `CLOUDFLARE_API_TOKEN` | sneat-co **org secret** | already exists — used by every Sneat site |
 | `CLOUDFLARE_ACCOUNT_ID` | sneat-co **org variable** | already exists |
-| `dashboardius.com` custom domain on the `dashboardius` Worker | Cloudflare dashboard, once | **needed** — creating a custom domain requires `Zone:DNS:Edit`, which the Workers-scoped CI token does not have. After this one step CI keeps the Worker in sync. |
+| `dashboardius.com` custom domain on the `dashboardius` Worker | attached automatically | **done** — the org `CLOUDFLARE_API_TOKEN` turned out to carry `Zone:DNS:Edit`, so the first CI deploy created the custom domain and its DNS record itself. No dashboard step was needed. |
 | `dashboardius.com` in Firebase **authorised domains** | Firebase console → Authentication → Settings | **needed** for sign-in |
 | `https://dashboardius.com/__/auth/handler` in the Google OAuth **authorised redirect URIs** | Google Cloud console → Credentials | **needed** for Google sign-in |
 | `PRIMEUI_LICENSE` | org or repo secret | **optional but recommended** — PrimeNG 21+ ships under the PrimeUI licence and injects a "license not configured" banner without a key. Sneat is inside the free Community tier; the key still has to exist. Without it the build succeeds and the banner shows. |
 | A `dashboardius` Web App registered in the `sneat-eur3-1` Firebase project | Firebase console | optional — only matters if Dashboardius ever turns on Firebase Analytics, which it deliberately does not. See `src/environments/environment.ts`. |
 
-Until the custom domain is attached, `wrangler deploy` publishes to
-`dashboardius.<account>.workers.dev`, where everything works except Google
-sign-in (that host is not an authorised Firebase domain).
+The site is live at **https://dashboardius.com**. Everything works there except
+Google sign-in, which needs the two Firebase/Google console entries above — until
+they exist, the app falls back to the Firebase-hosted auth domain rather than
+failing.
 
 ---
 

@@ -36,6 +36,11 @@ import { SiteFooterComponent } from './site-footer.component';
   template: `
     <a class="db-skip-link" href="#board">Skip to the dashboard</a>
 
+    <!-- Permanently in the DOM, because a live region that appears at the same
+         moment its text does is not announced. Everything that changes the
+         board writes one sentence here. -->
+    <p class="db-visually-hidden" role="status" aria-live="polite">{{ store.announcement() }}</p>
+
     <db-app-bar (signIn)="openAuth('sign-in')" />
 
     <main>
@@ -96,7 +101,7 @@ import { SiteFooterComponent } from './site-footer.component';
         </div>
 
         @if (resetNotice()) {
-          <p class="reset-notice" role="status">
+          <p class="reset-notice">
             Back to the original board. Nothing was saved, because nothing is saved yet.
           </p>
         }

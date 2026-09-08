@@ -67,7 +67,7 @@ import { DashboardStore } from '../state/dashboard-store';
     </div>
 
     @if (run().phase !== 'idle' && run().phase !== 'typing') {
-      <div class="trace" role="status" [class.is-unmatched]="run().phase === 'unmatched'">
+      <div class="trace" [class.is-unmatched]="run().phase === 'unmatched'">
         @if (run().phase === 'unmatched') {
           <p class="trace-head">
             <span class="dot is-idle" aria-hidden="true"></span>

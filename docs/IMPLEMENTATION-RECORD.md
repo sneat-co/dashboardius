@@ -181,9 +181,11 @@ build.
    and the shared cf-deploy workflow already threads that secret — but no key is
    configured, so the banner is currently visible. Sneat is inside the free
    Community tier; the key still has to be obtained and set.
-2. **Cloudflare custom domain.** `dashboardius.com` must be attached to the
-   `dashboardius` Worker once from the dashboard — creating a custom domain needs
-   `Zone:DNS:Edit`, which the Workers-scoped CI token does not carry.
+2. ~~**Cloudflare custom domain.**~~ Resolved on the first deploy: the org
+   `CLOUDFLARE_API_TOKEN` does carry `Zone:DNS:Edit`, so wrangler attached
+   `dashboardius.com` and created its DNS record without a dashboard step. The
+   fleet's `docs/HOSTING.md` says this needs doing by hand; for this token it did
+   not, and that is worth knowing before the next product is set up.
 3. **Firebase authorised domain and Google OAuth redirect URI.** Both need
    `dashboardius.com` added before sign-in works on the apex. The config falls
    back safely to the Firebase-hosted auth domain on any other host.
