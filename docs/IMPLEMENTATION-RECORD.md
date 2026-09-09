@@ -5,6 +5,15 @@ and the judgement calls behind each. Written at the end of the first
 implementation session so the next person does not have to reverse-engineer the
 reasoning from the diff.
 
+> **Historical scope and correction (2026-09-09).** This records the prototype
+> built on 2026-09-08. Its presentation observations remain useful, but its
+> “field for field” and already-compatible DataTug board claims were disproved by
+> a later cross-repository review. The current code is an in-memory scripted
+> prototype: persistence, real query execution, canonical serialization and a
+> colleague reopening a saved board have not been demonstrated. The corrected
+> target contract is the repository's
+> [query-backed board Feature](../spec/features/query-backed-board-persistence/README.md).
+
 ---
 
 ## 1. Repository strategy
@@ -45,24 +54,36 @@ brief and it is what this repo is modelled on.
 
 | What | Where it came from | How it is used |
 | --- | --- | --- |
-| **The board schema** — `IBoardDef`, `IBoardRowDef`, `IBoardCardDef`, `IWidgetDef` | `datatug-apps/libs/datatug/main/src/lib/models/definition/board/*.ts`, itself a mirror of `datatug-core/pkg/datatug/boards.go` | Copied field for field into `web/src/app/dashboard/model/board.model.ts`. The JSON a Dashboardius board produces is already a DataTug board. |
-| **The SQL widget name and recordset shape** — `sqlWidgetName = 'SQL'`, `columns` / `rows` / `duration` | same, plus `dto/execute.ts`'s `IRecordsetResult` | The query card's data is DataTug's recordset shape, not a Dashboardius invention. |
+| **Board concepts** — board, row, card and open widget envelope | Older `datatug-apps` interfaces and `datatug-core/pkg/datatug/boards.go` | Borrowed as a prototype starting point. The resulting local interfaces are not field-for-field and MUST NOT be persisted as a canonical DataTug board. |
+| **SQL label and recordset display concepts** — `SQL`, columns, rows and duration | Older DataTug UI and execute DTOs | Used to render demo query data. The prototype combines a runtime result with widget settings; it is not DataTug's durable `SQLWidgetDef`. |
 | **The 12-column row layout** | DataTug's `IBoardCardDef.cols` ("how many of 12 available columns it can take") | The board grid is a 12-column CSS grid, and resize is a change to `cols`. |
 | **Tabulator as the grid** | `@sneat/datagrid` wraps `tabulator-tables`; `datatug-apps` uses it for query results | Offered as a grid engine on the query card, so a Dashboardius grid and a DataTug table view feel like the same table. |
 
-### Why the schema was copied rather than imported
+### Why a model was copied rather than imported
 
-`@sneat/datatug-main` is **not published to npm** — it is version `0.0.1`, has no
+At the time of the 2026-09-08 prototype, `@sneat/datatug-main` was **not published to npm** — it was `@sneat/datatug-main@0.0.1`, had no
 `publishConfig`, and is resolved inside `datatug-apps` by a TypeScript path alias
-in `tsconfig.base.json`. There is no package to depend on, and the board
-interfaces are not even re-exported from that library's `public_api.ts`.
+in `tsconfig.base.json`. There was no published package to depend on, and the board
+interfaces were not even re-exported from that library's `public_api.ts`.
 
-Publishing them would be a change to DataTug, which this task is explicitly not
-allowed to make. So the file carries a provenance comment naming the exact source
-and the intended end state: a published `@datatug/board-models` consumed by both
-products. **This is the one piece of duplication in the codebase and it is
-deliberate, documented, and load-bearing** — if the schema is ever edited here
-without being edited there, the compatibility claim quietly becomes false.
+That explained copying a starting model for the prototype; it did not prove the
+copy matched the Go contract. The 2026-09-09 review found concrete differences:
+
+- Dashboardius omits canonical `folder`, `userIds`, `access`, `parameters`,
+  `requiredParams` and row `maxHeight` fields;
+- Dashboardius adds board `description` and row `id`, although DataTug's Go
+  `Board` and `BoardRow` have neither;
+- Dashboardius's SQL data stores environment and returned recordset data, while
+  DataTug's `SQLWidgetDef` stores `title`, `parameters` and nested
+  `sql: { query }` settings;
+- Dashboardius adds `chart`, `stats` and `content` widget names, while DataTug's
+  current Go validator rejects those names.
+
+The shared `@datatug/board-models` package now exists in `datatug-apps`, but the
+cross-repository migration is incomplete. As inspected on 2026-09-09,
+`datatug-core` main still lacked the board parameter fields while its
+`origin/feat/board-params` branch and the TypeScript package carried them. This
+record therefore treats those fields as pending convergence, not landed reality.
 
 ### What was NOT reused from DataTug, and why
 
@@ -104,7 +125,7 @@ without being edited there, the compatibility claim quietly becomes false.
 | Undo / redo / reset store | `state/dashboard-store.ts` | — |
 | Command catalogue and matcher | `state/command-catalog.ts` | The scripted half of `command → actions → mutation`. |
 | Chart configuration | `charts/chart-options.ts` | Pure functions producing Chart.js data/options, enforcing one y axis, slot-keyed colour, thin marks. |
-| Three widget kinds | `chart`, `stats`, `content` in `model/board.model.ts` | DataTug ships `SQL`, `tabs` and `http`. These are additions by NAME, not schema changes. |
+| Three prototype widget kinds | `chart`, `stats`, `content` in `model/board.model.ts` | Presentation behavior owned by Dashboardius. Their durable extension contract is not yet accepted by DataTug's Go validator. |
 | Chart / stats / content / query cards | `ui/cards/*` | — |
 | Switchable grid engine + shared cell renderer | `ui/cards/data-grid.component.ts`, `tabulator-grid.component.ts`, `ag-grid.component.ts`, `cell-format.ts` | Rich column types (text, number, amount, progress, date, boolean, gender) with conditional tinting, rendered identically by three engines. |
 | Card shell, card menu, board grid, command bar, app bar | `ui/*` | — |
@@ -243,8 +264,11 @@ build.
    borrowed from another Sneat product. It affects nothing today because Firebase
    Analytics is deliberately not initialised, but it should be replaced before it
    ever is.
-5. **`@datatug/board-models`.** Publishing the shared board schema would remove
-   the one duplication in this codebase.
+5. **Canonical board-model migration.** `@datatug/board-models` now exists in
+   `datatug-apps`, but Dashboardius does not consume it and the Go/TypeScript
+   board-parameter change was not converged on the inspected main branches. The
+   migration also needs a real Go store round trip and separation of runtime
+   results from durable widget settings.
 6. **Initial bundle is ~822 kB raw / ~185 kB transferred.** Chart.js, Firebase,
    Tabulator and AG Grid are all deferred; what remains is Angular, PrimeNG's
    styled-mode runtime and CDK drag-drop. If it needs to come down further, the

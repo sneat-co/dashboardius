@@ -7,7 +7,7 @@ surface, one repository, no backend of its own yet.
 
 ```
 web/                Angular 22 + PrimeNG application, plus the Cloudflare Worker
-  src/app/dashboard/model/    the board schema — REUSED FROM DATATUG, see below
+  src/app/dashboard/model/    prototype board and presentation view model
   src/app/dashboard/state/    command → actions → reducer → board
   src/app/dashboard/ui/       the board, cards and chrome
   src/app/dashboard/charts/   Chart.js configuration (pure functions)
@@ -18,12 +18,14 @@ docs/                         architecture notes and the implementation record
 
 ## The rules that are easy to break here
 
-1. **Do not redesign the board schema.** `src/app/dashboard/model/board.model.ts`
-   is DataTug's `IBoardDef` / `IBoardRowDef` / `IBoardCardDef` / `IWidgetDef`,
-   copied field-for-field from `datatug-apps`, which mirrors the Go definition in
-   `datatug-core/pkg/datatug/boards.go`. Add a widget NAME, never a field to those
-   four interfaces. If a field seems necessary, it probably belongs in view state
-   (see `DashboardPageComponent`'s `gridEngineByCard`) or upstream in DataTug.
+1. **Do not treat the prototype model as the durable board schema.**
+   `src/app/dashboard/model/board.model.ts` currently diverges from DataTug's Go
+   contract and DataTug-owned TypeScript package. It is safe only for the scripted
+   in-memory demo. DataTug owns durable board fields and serialization; change
+   that contract upstream, publish it, and consume it here. Keep runtime results,
+   row view keys and renderer choices in Dashboardius view state. The owning
+   journey and migration plan are in
+   `spec/features/query-backed-board-persistence/README.md`.
 
 2. **Chrome colours and series colours are two palettes and never mix.**
    `--brand` is chrome only; `--series-1..8` are data marks only. The series ramp

@@ -6,3 +6,6 @@ out-tsc/
 test-results/
 playwright-report/
 *.log
+specscore.local.yaml
+**/.*.lifecycle-transaction.lock
+.specscore-lifecycle.lock

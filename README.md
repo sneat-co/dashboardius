@@ -39,7 +39,7 @@ Node 22, pnpm 11.20.
 
 ```
 web/
-  src/app/dashboard/model/     the board schema (DataTug's, reused verbatim)
+  src/app/dashboard/model/     prototype board and presentation view model
   src/app/dashboard/state/     command → structured actions → reducer → board
   src/app/dashboard/ui/        board grid, card shell, card menu, command bar
   src/app/dashboard/charts/    Chart.js configuration, as pure functions
@@ -54,24 +54,25 @@ docs/IMPLEMENTATION-RECORD.md  what was reused, what was built, what was skipped
 
 ## Architecture decisions
 
-### The board is a DataTug board
+### The durable board belongs to DataTug
 
-`src/app/dashboard/model/board.model.ts` is DataTug's dashboard schema —
-`IBoardDef`, `IBoardRowDef`, `IBoardCardDef`, `IWidgetDef` — copied field for
-field from `datatug-apps`, which itself mirrors the canonical Go definition in
-`datatug-core/pkg/datatug/boards.go`. Dashboardius invents no persistence model,
-no project schema and no query schema.
+DataTug owns the canonical board schema, project persistence, saved queries,
+execution and access control. Dashboardius owns board presentation and editing.
+The current `src/app/dashboard/model/board.model.ts` predates the shared package
+and is an in-memory prototype model, not a persistable DataTug board contract.
 
-What it adds is presentation: three widget *names* (`chart`, `stats`, `content`)
-alongside DataTug's existing `SQL`. `IWidgetDef` is `{ name, data }` precisely so
-that this is not a schema change.
+The mismatch was verified on 2026-09-09. The prototype adds row IDs, omits
+canonical project-item and row fields, and puts rendered columns, rows and timing
+inside its SQL-shaped widget. Its `chart`, `stats` and `content` names are also
+not accepted by DataTug's current Go board validator. Those differences make the
+old “field for field” and “already compatible” claims false.
 
-The copy is a compromise, and a visible one. Those interfaces live inside
-`datatug-apps` behind an unpublished TypeScript path alias, so there is no
-package to import them from, and publishing one is a change to DataTug that this
-first release deliberately does not make. The file carries a provenance comment
-saying so. The right end state is a published `@datatug/board-models` consumed by
-both products.
+The target is a released `@datatug/board-models` contract, backed by a real
+Go load/save round trip. Dashboardius view state may wrap that contract with
+runtime results, renderer choices and transient row keys; those values are not
+durable board fields. The journey and migration work are specified in
+[Query-backed board persistence and sharing](spec/features/query-backed-board-persistence/README.md)
+and its [implementation plan](spec/plans/2026-09-09-query-backed-board-persistence.md).
 
 ### `command → structured actions → board mutation`
 
@@ -83,7 +84,8 @@ and the interesting half of the future feature already exists.
 
 A suggestion chip resolves to a **known** action list with no model in the loop.
 A free-form prompt will one day resolve to the same action list *via* a model.
-The execution half is already the production half.
+The reducer path is real presentation behavior. It does not yet execute a
+DataTug query, persist a board or establish a production integration.
 
 ### The AI demo does not call a model, and says so
 
@@ -215,8 +217,8 @@ failing.
 
 ## Not built, on purpose
 
-Real dashboard persistence, saving to GitHub, repo selection, production
-analytics, DataTug query authoring, dashboard permissions, collaboration,
+Real dashboard persistence, DataTug query execution, saving through DataTug's
+project storage, production analytics, dashboard permissions, collaboration,
 real-time multi-user editing, production AI dashboard editing, comprehensive
 sharing, embedding, billing.
 
