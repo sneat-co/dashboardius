@@ -98,7 +98,7 @@ MUST be able to remove, reorder and add cards afterwards; the defaults are a sta
 arrangement, not a managed view that Dashboardius keeps in sync.
 
 The durable shape of the incident reference is **not** Dashboardius's to invent, and it is
-now settled on the hub side: the hub `dashboards` Feature specifies `Board.incidentRef` as an
+now specified on the hub side (a lead assumption there, open to review): the hub `dashboards` Feature specifies `Board.incidentRef` as an
 `IncidentRef` — `{storeId, incidentId}` — mirrored in `@datatug/board-models`
 (REQ:incident-boards-and-shared-renderer). Dashboardius reads and writes that structured
 field and never persists a string of its own. This repository's standing rule still holds:
