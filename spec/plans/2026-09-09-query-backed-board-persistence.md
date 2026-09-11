@@ -95,7 +95,14 @@ Run the journey from its real product entry point with the released companion re
 
 ## Open Questions
 
-- Task 1 is a decision gate: which SQL widget binding alternative should DataTug adopt?
+- ~~Task 1 is a decision gate: which SQL widget binding alternative should DataTug adopt?~~
+  Ruled by the founder 2026-09-09 (verbatim: *"I'm Ok with the suggested option 1"*): a SQL
+  widget references a library query by `queryId` plus parameter bindings and carries no query
+  text or execution target; recorded in the hub `dashboards` Feature and this repository's
+  `query-backed-board-persistence` Feature. Task 1's remaining work is only to reflect the
+  ruling in this plan's acceptance references. Since 2026-09-11 the Dashboardius app code
+  also moves into the `datatug/datatug-apps` Nx workspace (hub `product-profiles`), which
+  turns Task 3's package consumption into a workspace import.
 - Before colleague editing is enabled, should conflicts be rejected for explicit reload/merge, or should DataTug provide a structured board merge?
 
 ---

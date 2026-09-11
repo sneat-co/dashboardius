@@ -17,6 +17,8 @@ This is the Dashboardius-owned user journey for the DataTug hub Feature [Dashboa
 
 This journey is the DataTug roadmap's Phase 5 Dashboardius persistence milestone. It depends on Phase 4 project grants for the authorized-colleague and revocation steps; it is not part of the Phase 1 core investigation loop.
 
+Per the founder's 2026-09-11 ruling that the DataTug, Incidentius and Dashboardius application code lives in one Nx workspace, the Dashboardius application code moves into `datatug/datatug-apps`, with the cutover inventory and sequencing owned by the DataTug hub `product-profiles` Feature; this journey's behavior is unchanged by that move.
+
 ## Problem
 
 The current public Dashboardius surface is an honest scripted prototype. It starts from `DEMO_BOARD`, keeps edits in browser memory, embeds invented result rows in its SQL-shaped widget, and tells the user that Save and Share are not built. It proves useful presentation and reversible editing, but it does not prove that a real DataTug query can become a durable board card or that another authorized person can reopen it.
@@ -57,7 +59,7 @@ Dashboardius MUST NOT become a second query engine, project store, access-contro
 
 A saved card MUST contain a durable reference or binding that DataTug can resolve after every browser tab is closed. It MUST NOT treat returned rows, aggregates, durations or policy limitations as the authoritative saved query definition. Runtime results may be cached only under an explicit DataTug cache policy; a cache is never the sole durable board content.
 
-The exact durable shape for a SQL widget remains an open product decision below. Until it is resolved in the DataTug dashboards Feature, an implementation MUST NOT invent `db`, `environment`, inline SQL or query-reference fields in Dashboardius.
+The durable shape for a SQL widget is settled. The founder ruled 2026-09-09 (verbatim): *"I'm Ok with the suggested option 1"* — a SQL widget references a library query by `queryId` plus parameter bindings, and carries no query text and no execution target of its own. The query's text and target come from the referenced `QueryDef`; the environment stays the viewer's choice at view time. Dashboardius MUST bind widgets that way and MUST NOT invent `db`, `environment`, inline SQL or alternative query-reference fields. A board therefore cannot hold an ad-hoc query that is not in the project's library, and any inline-SQL prototype widget must be migrated to a library query rather than persisted as-is.
 
 ### Cross-language contract
 
@@ -138,7 +140,7 @@ Dashboardius presentation state MAY wrap a canonical board with view-only row ke
 
 ## Open Questions
 
-- **How is a board SQL widget bound to an executable DataTug query and target?** This remains open in the owning cross-product [DataTug dashboards Feature](https://github.com/datatug/datatug/blob/main/spec/features/dashboards/README.md). The live alternatives are a library-query reference, a board-level target inherited by widgets, or a widget-level database with environment selected at view time. This Dashboardius Feature deliberately does not choose among them.
+- ~~**How is a board SQL widget bound to an executable DataTug query and target?**~~ Ruled by the founder 2026-09-09 (verbatim): *"I'm Ok with the suggested option 1"*, recorded in the owning cross-product [DataTug dashboards Feature](https://github.com/datatug/datatug/blob/main/spec/features/dashboards/README.md). The widget references a library query by `queryId` plus parameter bindings; text and target come from the referenced `QueryDef` and the environment is the viewer's choice at view time. The other two alternatives — a board-level target inherited by widgets, and a widget-level database — are dead. See "Durable binding and runtime result" above.
 - What conflict and merge behavior should DataTug expose when two authors save the same board revision? This does not block a single-author milestone, but the API must reject silent overwrites before colleague editing is enabled.
 
 ---
