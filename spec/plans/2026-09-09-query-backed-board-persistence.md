@@ -13,15 +13,15 @@ status: Draft
 
 ## Summary
 
-This plan delivers the DataTug roadmap's Phase 5 Dashboardius persistence milestone: one real query → one card → save → reload → authorized colleague journey without replacing Dashboardius's useful presentation work or duplicating DataTug execution and storage. It begins with the unresolved binding decision and canonical contract, then integrates the DataTug server boundary, Dashboardius editing state and real browser acceptance. DataTug Phase 4 project grants are a prerequisite for the colleague and revocation acceptance.
+This plan delivers the DataTug roadmap's Phase 5 Dashboardius persistence milestone: one real query → one card → save → reload → authorized colleague journey without replacing Dashboardius's useful presentation work or duplicating DataTug execution and storage. It begins by recording the already-settled binding decision and the canonical contract, then integrates the DataTug server boundary, Dashboardius editing state and real browser acceptance. DataTug Phase 4 project grants are a prerequisite for the colleague and revocation acceptance.
 
 ## Approach
 
-Treat the existing Dashboardius board as a presentation prototype and keep its reducers, widget rendering, stable metric slots, table alternatives, Undo/Reset and honest scripted labeling. Define and prove the durable cross-language contract before wiring persistence. DataTug remains the only project store, query executor and access-control boundary; Dashboardius maps a canonical saved board plus ephemeral runtime results into its UI. The milestone does not start production implementation until the SQL widget binding decision is recorded in the DataTug dashboards Feature.
+Treat the existing Dashboardius board as a presentation prototype and keep its reducers, widget rendering, stable metric slots, table alternatives, Undo/Reset and honest scripted labeling. Define and prove the durable cross-language contract before wiring persistence. DataTug remains the only project store, query executor and access-control boundary; Dashboardius maps a canonical saved board plus ephemeral runtime results into its UI. The SQL widget binding decision is already recorded in the DataTug `dashboards` Feature, so it does not gate this milestone.
 
 ## Tasks
 
-### Task 1: Resolve the SQL widget binding decision in the owning Feature
+### Task 1: Record the settled SQL widget binding decision in this plan's acceptance references
 
 **Id:** task-1
 **Verifies:** query-backed-board-persistence#ac:real-query-becomes-card
