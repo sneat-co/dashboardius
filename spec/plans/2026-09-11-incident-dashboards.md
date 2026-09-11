@@ -261,6 +261,26 @@ by a task rather than deferred.
   incidents to learn from and the hub's incident-similarity work; it is not scheduled in this
   plan.
 
+## Review findings to resolve before execution
+
+Findings from the external roadmap/plans review (hub
+[spec/research/2026-09-11-external-roadmap-plans-review.md](https://github.com/datatug/datatug/blob/main/spec/research/2026-09-11-external-roadmap-plans-review.md),
+2026-09-11) that this plan must resolve before implementation starts:
+
+- **F7 (provider dependencies):** this plan's prerequisites — the DataTug board read/write API
+  (Track C1, `2026-09-09-query-backed-board-persistence` tasks 2-6), the incidents MVP asset,
+  event stream, metrics, execution records and `/datatug/compare` (hub Track B1), and the
+  board-widget extension boundary (hub Incidentius MVP plan task 13) — are named in the Summary
+  prose only. Fix direction: Tasks 2-8's dependent acceptance must not proceed until those
+  specific providers land, even though preparation work (e.g. Task 1) may run in parallel.
+- **F8 (C3 has no owner plan) / cut 3 (renderer relocation):** Task 1 builds the shared renderer
+  as a workspace library inside `sneat-co/dashboardius`, on the "lead assumption" that Track C3
+  relocates it into `datatug/datatug-apps` later — but C3 itself has no executable owner plan
+  yet (deployment transfer, old-shell removal and domain smoke are unowned). Fix direction: give
+  C3 its own plan before this dependency is exercised, and build the shared renderer directly in
+  its final `datatug/datatug-apps` Nx workspace location unless a demonstrated constraint
+  requires the intermediate `sneat-co/dashboardius` build first.
+
 ## Open Questions
 
 - ~~Task 3 depends on a hub decision that does not exist yet: where the incident↔board link
