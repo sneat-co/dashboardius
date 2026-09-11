@@ -97,12 +97,15 @@ incident's own `impact`, `diagnostic`, `recovery`, `watch` order (vision §20). 
 MUST be able to remove, reorder and add cards afterwards; the defaults are a starting
 arrangement, not a managed view that Dashboardius keeps in sync.
 
-The durable shape of the incident reference is **not** Dashboardius's to invent. The hub
-`dashboards` Feature owns `Board`, and this repository's standing rule holds: new
-Dashboardius capability arrives as new widget *names* inside the `{name, data}` envelope,
-never as new fields on `Board`, `BoardRow` or `BoardCard`. Until the hub adds the field,
-Dashboardius MUST NOT persist an invented one (lead assumption: the minimal hub-side
-addition is a board-level `incidentRef` string; see Open Questions).
+The durable shape of the incident reference is **not** Dashboardius's to invent, and it is
+now settled on the hub side: the hub `dashboards` Feature specifies `Board.incidentRef` as an
+`IncidentRef` — `{storeId, incidentId}` — mirrored in `@datatug/board-models`
+(REQ:incident-boards-and-shared-renderer). Dashboardius reads and writes that structured
+field and never persists a string of its own. This repository's standing rule still holds:
+new Dashboardius capability arrives as new widget *names* inside the `{name, data}` envelope,
+never as new fields on `Board`, `BoardRow` or `BoardCard`. `incidentRef` is the one hub-owned
+exception to that rule — added by the hub `dashboards` Feature, not by Dashboardius, and not
+a precedent for Dashboardius inventing further `Board` fields itself.
 
 ### Widgets
 
@@ -199,6 +202,11 @@ anything.
 | Environment comparison | comparison cards over two environments | NEXT |
 | Historical replay | every card resolved at a chosen time T | NEXT |
 
+Registering the `metric-series`, `comparison`, `resolution-criteria` and `replay` widget
+names requires the hub's extension boundary (hub `dashboards`
+REQ:incident-boards-and-shared-renderer; hub Incidentius MVP plan task 13, "Board widget
+extension boundary and incident reference"); until it lands, the Go validator rejects them.
+
 MVP for Dashboardius is **live impact, recovery and watch**, and none of them starts before
 board persistence exists (Track C1). Investigation and the two comparison kinds follow the
 `comparison-widget`; replay follows `replay-board`.
@@ -210,12 +218,15 @@ every card on the board MUST then show the latest execution record at or before 
 with that record's identifier and `observedAt`. A card with no record at or before T MUST
 say that there was no evidence yet, and MUST NOT fall back to the current value.
 
-Replay MUST read the incident event stream through `/datatug/incidents/*` and the execution
-records through `/datatug/executions…`. It MUST NOT execute or re-execute anything for a
-past T under any circumstance — a replayed number is a recorded number or it is absent. The
-scrubber's stops MUST come from the event stream's own timestamps (checks run, hypotheses
-proposed, mitigation applied, criteria satisfied), so scrubbing lands on moments where
-something actually happened rather than on arbitrary clock ticks.
+Replay MUST read the incident event stream through the hub's NDJSON endpoint
+(`GET /datatug/incidents/{id}/events?since=<cursor>`, hub `incidents` REQ:watch-event-cursor)
+and the execution records through `/datatug/executions…`. It MUST NOT execute or re-execute
+anything for a past T under any circumstance — a replayed number is a recorded number or it
+is absent. The scrubber's stops MUST come from the event stream's own timestamps (checks run,
+hypotheses proposed, mitigation applied, criteria satisfied), so scrubbing lands on moments
+where something actually happened rather than on arbitrary clock ticks. A live view that wants
+to react to new events, not only new execution records, consumes the same NDJSON stream with
+its resumable cursor; there is no separate polling loop or notification route.
 
 Leaving replay MUST return every card to live evidence, and the board MUST make plain at a
 glance which of the two states it is in, because a replayed board and a live board look
@@ -330,10 +341,11 @@ derived from, recorded as an inference rather than an observation.
 
 ## Open Questions
 
-- ~~**Where does the incident↔board link live?**~~ Settled 2026-09-11 in the hub `dashboards`
-  Feature (REQ:incident-boards-and-shared-renderer, a lead assumption open to founder review):
-  an optional `Board.incidentRef` string, mirrored in `@datatug/board-models`; access still
-  follows the project's grants. Dashboardius reads and writes it through the board API only.
+- ~~**Where does the incident↔board link live?**~~ Answered by the hub `dashboards` Feature
+  (REQ:incident-boards-and-shared-renderer; lead assumption on the hub side, open to review):
+  an optional `Board.incidentRef` — an `IncidentRef` of `{storeId, incidentId}` — mirrored in
+  `@datatug/board-models`; access still follows the project's grants. Dashboardius reads and
+  writes it through the board API only.
 - **What does a replay card show when the execution record exists but its result snapshot was
   not retained?** The fingerprint and the numeric projection may survive when rows do not.
   Owned by the hub `evidence-records` Feature's retention and masking defaults.
