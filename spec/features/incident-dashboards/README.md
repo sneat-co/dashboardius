@@ -65,7 +65,7 @@ from UAT. Mitigation lands and the recovery cards fall to zero. The resolution-c
 turns green criterion by criterion. After resolution the watch cards run for hours with
 nobody doing anything. A month later somebody drags a scrubber back to 14:52 and sees what
 was known then. The plan
-[2026-09-11-incident-dashboards](../../plans/2026-09-11-incident-dashboards.md) tells that
+[2026-09-11-incident-dashboards](https://github.com/sneat-co/workbench/blob/main/spec/plans/github.com/sneat-co/dashboardius/2026-09-11-incident-dashboards/README.md) tells that
 journey in full.
 
 ### Ownership boundary
