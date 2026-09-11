@@ -18,15 +18,22 @@ created from a DataTug incident, a `metric-series` widget drawn from execution r
 resolution-criteria widget, a comparison widget, a replay board, and one whole-journey
 browser test that proves no value on any card came from anywhere but DataTug's server.
 
-It has two prerequisites and starts with neither of them done. **Track C1** — tasks 2–6 of
+It has three prerequisites and starts with none of them done. **Track C1** — tasks 2–6 of
 [2026-09-09-query-backed-board-persistence](2026-09-09-query-backed-board-persistence.md):
-the canonical board contract, Dashboardius consuming it instead of its own copy, the
-`/datatug/boards` read/write API, saving a real query-backed card and reloading it. Without
-those a board assembled during an incident still evaporates with the tab. **Hub Track B1** —
-the incidents MVP: the incident asset and its event stream, metrics with numeric
-projections in the impact/diagnostic/recovery/watch categories, explicit resolution criteria,
-execution records with fingerprints, and the `/datatug/incidents/*` endpoints. The
-`compare` endpoint (`POST /datatug/compare`) is needed only from Task 5 onward.
+the canonical board contract, Dashboardius consuming it instead of its own copy, and the
+`/datatug/boards` read/write API itself. That API does not exist yet — it is a Track C1
+deliverable, not something this plan can consume today. Without it a board assembled during
+an incident still evaporates with the tab, and Task 3's save/reload has nothing to call.
+**Hub Track B1** — the incidents MVP: the incident asset and its event stream, metrics with
+numeric projections in the impact/diagnostic/recovery/watch categories, explicit resolution
+criteria, execution records with fingerprints, and the `/datatug/incidents/*` endpoints. The
+`compare` endpoint (`POST /datatug/compare`) is needed only from Task 5 onward. **Hub
+Incidentius MVP plan task 13** — the board widget extension boundary: `BoardWidget.Validate`
+in `datatug-core` rejects `metric-series`, `comparison`, `resolution-criteria` and `replay`
+today, and the `@datatug/board-models` `BoardWidgetName` union is documentation only
+(`BoardWidget.name` is typed `string`), so the boundary is opened on the Go side and mirrored
+in TypeScript by task 13; `Board.incidentRef` as an `IncidentRef` (`{storeId, incidentId}`) lands there too.
+Tasks 2–6 are blocked on this task, not only on Track C1.
 
 ## The journey
 
@@ -113,14 +120,22 @@ here.
 **Status:** planning
 
 Move the Dashboardius board renderer — cards, layout, charts, table twins, `cell-format.ts`,
-the series palette — into a library in the `datatug/datatug-apps` Nx workspace, consumed by
-the Dashboardius application and embeddable as an island in a DataTug or Incidentius page.
-Keep view state (grid engine, chart shape, card width, runtime results, row view keys,
-command trace, undo history) in the host, outside the persisted board. The library must not
-require the Ionic shell and must not let a host restyle data marks. The full cutover
-inventory for the application itself — worker, `wrangler.jsonc`, `cf-deploy.yml`, Playwright,
-Renovate, theme and licence scripts — is the hub `product-profiles` Feature's; this task
-moves the renderer, not the deployment.
+the series palette — into a workspace library, consumed by the Dashboardius application and
+structured so it can be embedded as an island in a DataTug or Incidentius page. Keep view
+state (grid engine, chart shape, card width, runtime results, row view keys, command trace,
+undo history) in the host, outside the persisted board. The library must not require the
+Ionic shell and must not let a host restyle data marks. The full cutover inventory for the
+application itself — worker, `wrangler.jsonc`, `cf-deploy.yml`, Playwright, Renovate, theme
+and licence scripts — is the hub `product-profiles` Feature's; this task moves the renderer,
+not the deployment.
+
+The library must end up published or linkable from the `datatug/datatug-apps` Nx workspace,
+because that is where the DataTug/Incidentius embedding host lives; exactly when and how it
+gets there is Track C3's workspace cutover decision (hub `product-profiles`), not yet made.
+Lead assumption: this task builds the library as a workspace library inside
+`sneat-co/dashboardius` first, and Track C3 republishes or relocates it into
+`datatug/datatug-apps` when the cutover lands — Task 1 is not blocked on Track C3 landing
+first.
 
 ### Task 2: Build the `metric-series` widget over execution records
 
@@ -172,6 +187,7 @@ and show each criterion's own evidence age rather than the board's refresh time.
 **Verifies:** incident-dashboards#ac:comparison-widget-shows-overrepresentation
 **Depends-On:** 3
 **Status:** planning
+**Activation:** NEXT (Track C2 second slice)
 
 Add the `comparison` widget name, with a durable `data` of query or check reference,
 bindings, two scopes and mode, and no rows, counts or verdict. Render both response shapes:
@@ -187,6 +203,7 @@ over-represented. Cover affected-vs-control and environment-comparison arrangeme
 **Verifies:** incident-dashboards#ac:replay-scrubber-shows-state-at-time
 **Depends-On:** 2, 3, 4, 5
 **Status:** planning
+**Activation:** NEXT (Track C2 second slice)
 
 Add a time scrubber whose stops come from the incident event stream's own timestamps, and
 resolve every card on the board to the latest execution record at or before the selected T,
@@ -199,8 +216,8 @@ after them.
 ### Task 7: Run the whole incident-board journey in a browser
 
 **Id:** task-7
-**Verifies:** incident-dashboards#ac:incident-board-created-from-incident, incident-dashboards#ac:metric-series-renders-record-series, incident-dashboards#ac:comparison-widget-shows-overrepresentation, incident-dashboards#ac:replay-scrubber-shows-state-at-time, incident-dashboards#ac:criteria-widget-reflects-check-runs, incident-dashboards#ac:embedded-and-standalone-render-identically, incident-dashboards#ac:no-direct-execution-in-network-evidence
-**Depends-On:** 6
+**Verifies:** incident-dashboards#ac:incident-board-created-from-incident, incident-dashboards#ac:metric-series-renders-record-series, incident-dashboards#ac:criteria-widget-reflects-check-runs, incident-dashboards#ac:embedded-and-standalone-render-identically, incident-dashboards#ac:no-direct-execution-in-network-evidence
+**Depends-On:** 2, 3, 4
 **Status:** planning
 
 Run the journey above end to end against a real DataTug server and the canonical demo
@@ -214,6 +231,26 @@ Dashboardius-side store. Open the same saved board through the embedded renderer
 identical output. Induce a server failure and assert a stated error rather than demo data.
 Required CI fails when the real services or the demo incident fixture are unavailable.
 
+This run covers the MVP widgets — `metric-series`, `resolution-criteria` and incident-board
+creation (journey stages 1–4, 6–8 and 10). Journey stage 5 (comparison) and stage 9 (replay)
+are written into the same test file but belong to Task 8, which activates them once Tasks 5
+and 6 ship; no second whole-journey test is written for them.
+
+### Task 8: Activate the comparison and replay stages of the journey
+
+**Id:** task-8
+**Verifies:** incident-dashboards#ac:comparison-widget-shows-overrepresentation, incident-dashboards#ac:replay-scrubber-shows-state-at-time
+**Depends-On:** 5, 6, 7
+**Status:** planning
+**Activation:** NEXT (Track C2 second slice)
+
+Un-skip journey stage 5 (comparison over `POST /datatug/compare`) and stage 9 (replay
+scrubber) in the whole-journey test from Task 7, against the same real server and demo
+incident, with the same network-evidence assertion extended to the compare endpoint. This
+task adds no new test file and no new widget; it exists so that the MVP journey in Task 7 can
+complete without the NEXT widgets, and so that the two NEXT acceptance criteria are verified
+by a task rather than deferred.
+
 ## Deferred AC Coverage
 
 - incident-dashboards#ac:template-proposed-from-recurrence — FUTURE. Proposing a board
@@ -224,7 +261,8 @@ Required CI fails when the real services or the demo incident fixture are unavai
 ## Open Questions
 
 - ~~Task 3 depends on a hub decision that does not exist yet: where the incident↔board link
-  lives.~~ Settled 2026-09-11: the hub `dashboards` Feature specifies `Board.incidentRef`
+  lives.~~ Answered (lead assumption on the hub side, open to review): the hub `dashboards`
+  Feature specifies `Board.incidentRef` as an `IncidentRef` — `{storeId, incidentId}` —
   (REQ:incident-boards-and-shared-renderer); Task 3 uses it through the board API and never
   a Dashboardius-invented field.
 - Watch-period cards (Task 3) only advance when somebody runs a check, because the incidents
