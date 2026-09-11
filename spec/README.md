@@ -8,7 +8,7 @@ SpecScore-formatted specifications for this project.
 |---|---|
 | [`features/`](features/README.md) | Feature specifications — one per sub-system |
 | [`ideas/`](ideas/README.md) | Pre-spec one-pagers exploring problem-direction-MVP |
-| [`plans/`](plans/README.md) | Implementation plans linked to approved Features |
+| [`plans/`](https://github.com/sneat-co/workbench/blob/main/spec/plans/github.com/sneat-co/dashboardius/README.md) | Implementation plans linked to approved Features, stored in `sneat-co/workbench` |
 
 ## Open Questions
 
