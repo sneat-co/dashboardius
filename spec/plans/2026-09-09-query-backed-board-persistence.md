@@ -100,9 +100,10 @@ Run the journey from its real product entry point with the released companion re
   widget references a library query by `queryId` plus parameter bindings and carries no query
   text or execution target; recorded in the hub `dashboards` Feature and this repository's
   `query-backed-board-persistence` Feature. Task 1's remaining work is only to reflect the
-  ruling in this plan's acceptance references. Since 2026-09-11 the Dashboardius app code
-  also moves into the `datatug/datatug-apps` Nx workspace (hub `product-profiles`), which
-  turns Task 3's package consumption into a workspace import.
+  ruling in this plan's acceptance references. Since 2026-09-11 the Dashboardius shell is rebuilt in Ionic as the `dashboardius` profile of
+  the single app in `datatug/datatug-apps` (founder: *"one configurable app."*), with the
+  renderer's leaf widgets shared; the cutover is owned by the hub `product-profiles` Feature,
+  and it turns Task 3's package consumption into a workspace import.
 - Before colleague editing is enabled, should conflicts be rejected for explicit reload/merge, or should DataTug provide a structured board merge?
 
 ---

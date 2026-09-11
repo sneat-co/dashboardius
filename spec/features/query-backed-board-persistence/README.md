@@ -17,7 +17,7 @@ This is the Dashboardius-owned user journey for the DataTug hub Feature [Dashboa
 
 This journey is the DataTug roadmap's Phase 5 Dashboardius persistence milestone. It depends on Phase 4 project grants for the authorized-colleague and revocation steps; it is not part of the Phase 1 core investigation loop.
 
-Per the founder's 2026-09-11 ruling that the DataTug, Incidentius and Dashboardius application code lives in one Nx workspace, the Dashboardius application code moves into `datatug/datatug-apps`, with the cutover inventory and sequencing owned by the DataTug hub `product-profiles` Feature; this journey's behavior is unchanged by that move.
+Per the founder's 2026-09-11 ruling that the DataTug, Incidentius and Dashboardius application code lives in one Nx workspace, and the same-day ruling *"one configurable app."*, Dashboardius becomes the `dashboardius` profile of the single app in `datatug/datatug-apps` — its shell rebuilt with Ionic components, the renderer's leaf widgets shared — with the cutover inventory and sequencing owned by the DataTug hub `product-profiles` Feature; this journey's behavior is unchanged by that rebuild.
 
 ## Problem
 
