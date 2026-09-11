@@ -28,7 +28,7 @@ Treat the existing Dashboardius board as a presentation prototype and keep its r
 **Depends-On:** —
 **Status:** planning
 
-Present the three recorded alternatives with one concrete serialized example each, including how project, saved-query identity, source target, environment and parameters resolve. Record the founder's choice in the DataTug dashboards Feature and update its acceptance criteria. Do not infer a choice from the current inline SQL prototype.
+The binding alternative is already settled — ruled by the founder 2026-09-09 (verbatim: *"I'm Ok with the suggested option 1"*): a SQL widget references a library query by `queryId` plus parameter bindings and carries no query text or execution target of its own. This task reflects that ruling in this plan's acceptance references; it does not reopen the alternatives or infer a different choice from the current inline SQL prototype.
 
 ### Task 2: Publish and prove the canonical board contract
 
@@ -92,6 +92,22 @@ Use two real principals and the DataTug Phase 4 project-grant mechanism. The aut
 **Status:** planning
 
 Run the journey from its real product entry point with the released companion revisions pinned. Use no intercepted backend responses, local-only dependency substitutions, demo recordsets or deep links that skip the query-to-card transition. Capture the DataTug project file/revision, server request evidence and both principals' observable results. Required CI fails when the real services or two-principal fixture are unavailable.
+
+## Review findings to resolve before execution
+
+Findings from the external roadmap/plans review (hub
+[spec/research/2026-09-11-external-roadmap-plans-review.md](https://github.com/datatug/datatug/blob/main/spec/research/2026-09-11-external-roadmap-plans-review.md),
+2026-09-11) that this plan must resolve before implementation starts:
+
+- **Migration/conflict behaviour (Open Question below):** conflict handling once colleague
+  editing is enabled — reject on reload/merge, or a structured board merge — is unresolved.
+  Task 4 and Task 7 specify revision/conflict metadata but not the resolution policy. Fix
+  direction: decide and record the conflict-resolution policy before Task 4 is implemented.
+- **F9 (decision task claims journey-level proof):** Task 1 lists
+  `query-backed-board-persistence#ac:real-query-becomes-card` under Verifies, but Task 1 only
+  reflects the already-ruled SQL-widget-binding decision in this plan's acceptance references;
+  it does not implement or prove the AC. Fix direction: keep integrated proof of that AC on
+  Task 8, the journey task, and scope Task 1's Verifies to what it actually delivers.
 
 ## Open Questions
 
