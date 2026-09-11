@@ -246,9 +246,10 @@ error or access limitation, keeps the card definition intact, and says which cal
 
 #### REQ: shared-renderer-library
 
-The board renderer MUST be a library in the `datatug/datatug-apps` Nx workspace, consumed
-both by the Dashboardius application and, as an embedded island, by DataTug and Incidentius
-pages (founder ruling 2026-09-11 that the three apps' code shares one workspace; founder
+The board renderer MUST be a workspace library — built first inside `sneat-co/dashboardius`
+(plan Task 1, a lead assumption) and relocated into the `datatug/datatug-apps` Nx workspace by
+Track C3 — consumed both by the Dashboardius application and, as an embedded island, by
+DataTug and Incidentius pages (founder ruling 2026-09-11 that the three apps' code shares one workspace; founder
 UI-kit rule 2026-09-09 that an Ionic frame hosts PrimeNG/AG Grid islands only where Ionic
 lacks components). A given board MUST render identically in both: the same cards in the same
 order with the same values, the same table twins and the same series colours.

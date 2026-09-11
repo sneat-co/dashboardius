@@ -29,9 +29,10 @@ numeric projections in the impact/diagnostic/recovery/watch categories, explicit
 criteria, execution records with fingerprints, and the `/datatug/incidents/*` endpoints. The
 `compare` endpoint (`POST /datatug/compare`) is needed only from Task 5 onward. **Hub
 Incidentius MVP plan task 13** — the board widget extension boundary: `BoardWidget.Validate`
-in `datatug-core` and `BoardWidgetName` in `@datatug/board-models` are a closed union today
-and reject `metric-series`, `comparison`, `resolution-criteria` and `replay` until task 13
-lands; `Board.incidentRef` as an `IncidentRef` (`{storeId, incidentId}`) lands there too.
+in `datatug-core` rejects `metric-series`, `comparison`, `resolution-criteria` and `replay`
+today, and the `@datatug/board-models` `BoardWidgetName` union is documentation only
+(`BoardWidget.name` is typed `string`), so the boundary is opened on the Go side and mirrored
+in TypeScript by task 13; `Board.incidentRef` as an `IncidentRef` (`{storeId, incidentId}`) lands there too.
 Tasks 2–6 are blocked on this task, not only on Track C1.
 
 ## The journey
@@ -215,8 +216,8 @@ after them.
 ### Task 7: Run the whole incident-board journey in a browser
 
 **Id:** task-7
-**Verifies:** incident-dashboards#ac:incident-board-created-from-incident, incident-dashboards#ac:metric-series-renders-record-series, incident-dashboards#ac:comparison-widget-shows-overrepresentation, incident-dashboards#ac:replay-scrubber-shows-state-at-time, incident-dashboards#ac:criteria-widget-reflects-check-runs, incident-dashboards#ac:embedded-and-standalone-render-identically, incident-dashboards#ac:no-direct-execution-in-network-evidence
-**Depends-On:** 6
+**Verifies:** incident-dashboards#ac:incident-board-created-from-incident, incident-dashboards#ac:metric-series-renders-record-series, incident-dashboards#ac:criteria-widget-reflects-check-runs, incident-dashboards#ac:embedded-and-standalone-render-identically, incident-dashboards#ac:no-direct-execution-in-network-evidence
+**Depends-On:** 2, 3, 4
 **Status:** planning
 
 Run the journey above end to end against a real DataTug server and the canonical demo
@@ -230,12 +231,25 @@ Dashboardius-side store. Open the same saved board through the embedded renderer
 identical output. Induce a server failure and assert a stated error rather than demo data.
 Required CI fails when the real services or the demo incident fixture are unavailable.
 
-The MVP run of this journey is scoped to the MVP widgets — `metric-series`,
-`resolution-criteria` and incident-board creation (journey stages 1–4, 6–8 and 10) — because
-Tasks 5 and 6 (comparison, replay) are NEXT, Track C2's second slice. Journey stage 5
-(comparison) and stage 9 (replay) are written into the same test but explicitly marked NEXT
-and skipped when only the MVP widgets are activated; they run once Tasks 5 and 6 ship, and no
-second whole-journey test is written for them.
+This run covers the MVP widgets — `metric-series`, `resolution-criteria` and incident-board
+creation (journey stages 1–4, 6–8 and 10). Journey stage 5 (comparison) and stage 9 (replay)
+are written into the same test file but belong to Task 8, which activates them once Tasks 5
+and 6 ship; no second whole-journey test is written for them.
+
+### Task 8: Activate the comparison and replay stages of the journey
+
+**Id:** task-8
+**Verifies:** incident-dashboards#ac:comparison-widget-shows-overrepresentation, incident-dashboards#ac:replay-scrubber-shows-state-at-time
+**Depends-On:** 5, 6, 7
+**Status:** planning
+**Activation:** NEXT (Track C2 second slice)
+
+Un-skip journey stage 5 (comparison over `POST /datatug/compare`) and stage 9 (replay
+scrubber) in the whole-journey test from Task 7, against the same real server and demo
+incident, with the same network-evidence assertion extended to the compare endpoint. This
+task adds no new test file and no new widget; it exists so that the MVP journey in Task 7 can
+complete without the NEXT widgets, and so that the two NEXT acceptance criteria are verified
+by a task rather than deferred.
 
 ## Deferred AC Coverage
 
