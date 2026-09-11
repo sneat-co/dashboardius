@@ -119,8 +119,9 @@ here.
 **Depends-On:** —
 **Status:** planning
 
-Move the Dashboardius board renderer — cards, layout, charts, table twins, `cell-format.ts`,
-the series palette — into a workspace library, consumed by the Dashboardius application and
+Extract the board renderer's leaf widgets — charts, table twins, `cell-format.ts`, the series
+palette, drag-drop — into a workspace library (no PrimeNG layout, cards or menus: the shell is
+rebuilt in Ionic by Track C3), consumed by the `dashboardius` profile of the single app and
 structured so it can be embedded as an island in a DataTug or Incidentius page. Keep view
 state (grid engine, chart shape, card width, runtime results, row view keys, command trace,
 undo history) in the host, outside the persisted board. The library must not require the

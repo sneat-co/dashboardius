@@ -314,7 +314,7 @@ derived from, recorded as an inference rather than an observation.
 ### AC: embedded-and-standalone-render-identically (verifies REQ:shared-renderer-library)
 
 **Given** one saved incident board
-**When** it is opened in the Dashboardius application and in a DataTug or Incidentius page embedding the renderer library
+**When** it is opened on the `dashboardius` profile's own board page and in a DataTug or Incidentius page embedding the renderer library ("standalone" in this AC's name means the profile's own page; there is no separate application since the founder's 2026-09-11 ruling)
 **Then** both render the same cards in the same order with the same values, table twins and series colours; the persisted board contains no grid engine, chart shape, runtime result, row view key or replay time; and neither surface carries a second copy of the renderer.
 
 ### AC: no-direct-execution-in-network-evidence (verifies REQ:no-direct-execution)
