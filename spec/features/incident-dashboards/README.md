@@ -248,8 +248,8 @@ error or access limitation, keeps the card definition intact, and says which cal
 
 The board renderer MUST be a workspace library — built first inside `sneat-co/dashboardius`
 (plan Task 1, a lead assumption) and relocated into the `datatug/datatug-apps` Nx workspace by
-Track C3 — consumed both by the Dashboardius application and, as an embedded island, by
-DataTug and Incidentius pages (founder ruling 2026-09-11 that the three apps' code shares one workspace; founder
+Track C3 — consumed both by the `dashboardius` profile of the single app and, as an embedded
+island, by DataTug and Incidentius pages (founder ruling 2026-09-11 that the three apps' code shares one workspace; founder
 UI-kit rule 2026-09-09 that an Ionic frame hosts PrimeNG/AG Grid islands only where Ionic
 lacks components). A given board MUST render identically in both: the same cards in the same
 order with the same values, the same table twins and the same series colours.
@@ -263,9 +263,11 @@ re-stepping it would require re-validating its colourblind separation.
 The inventory and sequencing of moving `sneat-co/dashboardius/web` into the workspace is
 owned by the hub
 [`product-profiles`](https://github.com/datatug/datatug/blob/main/spec/features/product-profiles/README.md)
-Feature and is not restated here. Whether Dashboardius stays a separate application or
-becomes a profile of one configurable application is still the founder's open decision; this
-Feature is written so that either answer works, because the renderer is a library in both.
+Feature and is not restated here. The founder ruled on 2026-09-11 (verbatim: *"one
+configurable app."*): Dashboardius becomes the `dashboardius` profile of the single app, its
+shell is rebuilt with Ionic components, and PrimeNG, AG Grid, Chart.js and CDK drag-drop
+survive only as leaf widgets inside the renderer library — which is why the renderer is a
+library and why nothing in this Feature depends on a Dashboardius-owned shell.
 
 ### Later
 
@@ -357,9 +359,6 @@ derived from, recorded as an inference rather than an observation.
   two measures of different magnitude get two cards (lead recommendation: one measure per
   card, several cards per category). Several same-unit series on one card — stuck orders per
   region, say — would be the only exception worth making.
-- **Separate Dashboardius application or one configurable application** in the workspace
-  (founder; mirrors the hub product-family question). Either answer works here because the
-  renderer is a library, but it decides where the Dashboardius board routes live.
 
 ---
 *This document follows the https://specscore.md/feature-specification*

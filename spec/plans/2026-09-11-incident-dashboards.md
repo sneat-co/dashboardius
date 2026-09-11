@@ -130,12 +130,14 @@ and licence scripts — is the hub `product-profiles` Feature's; this task moves
 not the deployment.
 
 The library must end up published or linkable from the `datatug/datatug-apps` Nx workspace,
-because that is where the DataTug/Incidentius embedding host lives; exactly when and how it
-gets there is Track C3's workspace cutover decision (hub `product-profiles`), not yet made.
-Lead assumption: this task builds the library as a workspace library inside
-`sneat-co/dashboardius` first, and Track C3 republishes or relocates it into
-`datatug/datatug-apps` when the cutover lands — Task 1 is not blocked on Track C3 landing
-first.
+because that is where every host now lives: the founder ruled *"one configurable app."*
+(2026-09-11), so the `dashboardius` profile, DataTug and Incidentius pages are all one
+Ionic-framed app and Track C3 rebuilds the Dashboardius shell in Ionic while retiring the
+PrimeNG shell here (hub `product-profiles` REQ:dashboardius-app-cutover). This task therefore
+extracts only the leaf widgets — chart, grid, drag-drop — and their scoped theme CSS, never
+PrimeNG layout, cards or menus. Lead assumption: it builds the library as a workspace library
+inside `sneat-co/dashboardius` first, and Track C3 relocates it into `datatug/datatug-apps`;
+Task 1 is not blocked on Track C3 landing first.
 
 ### Task 2: Build the `metric-series` widget over execution records
 
