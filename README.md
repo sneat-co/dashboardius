@@ -72,7 +72,7 @@ Go load/save round trip. Dashboardius view state may wrap that contract with
 runtime results, renderer choices and transient row keys; those values are not
 durable board fields. The journey and migration work are specified in
 [Query-backed board persistence and sharing](spec/features/query-backed-board-persistence/README.md)
-and its [implementation plan](spec/plans/2026-09-09-query-backed-board-persistence.md).
+and its [implementation plan](https://github.com/sneat-co/workbench/blob/main/spec/plans/github.com/sneat-co/dashboardius/2026-09-09-query-backed-board-persistence/README.md).
 
 ### `command → structured actions → board mutation`
 
