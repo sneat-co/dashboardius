@@ -45,7 +45,7 @@ web/
   src/app/dashboard/charts/    Chart.js configuration, as pure functions
   src/app/auth/                Firebase authentication, lazily loaded
   src/app/theme/               design tokens for canvas, and the PrimeNG preset
-  worker.js  wrangler.jsonc    the Cloudflare edge
+  wrangler.jsonc, public/_headers  the Cloudflare edge config (assets-only, no Worker)
   e2e/                         Playwright
 docs/IMPLEMENTATION-RECORD.md  what was reused, what was built, what was skipped
 ```
@@ -193,8 +193,12 @@ who never opens that menu.
 
 Cloudflare Workers with static assets, deployed by the shared
 `sneat-co/cicd/.github/workflows/cf-deploy.yml` on every green push to `main`.
-The Worker (`web/worker.js`) does two things and no more: reverse-proxies
-Firebase's auth handler, and serves the prerendered app under one canonical host.
+The site is an assets-only Worker (`web/wrangler.jsonc` has no `main`), so static
+requests cost no Worker invocations. Security/cache headers are `web/public/_headers`;
+unknown paths get the SPA shell via `not_found_handling: single-page-application`.
+Two things that used to be Worker code now live at the zone: Firebase's `/__/auth/*`
+handler is served by the shared `sneat-firebase-auth-proxy` Worker's zone route for
+`dashboardius.com`, and `www.dashboardius.com` is a zone Single Redirect (301) to the apex.
 
 ### What you need to provide
 

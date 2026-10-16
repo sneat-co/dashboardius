@@ -30,9 +30,9 @@ const FIREBASE_AUTH_HOST = 'sneat-eur3-1.firebaseapp.com';
 
 /**
  * On dashboardius.com the auth domain is dashboardius.com ITSELF: the Cloudflare
- * Worker reverse-proxies Firebase's `/__/auth/*` handler, which keeps the whole
+ * zone route (`sneat-firebase-auth-proxy`) reverse-proxies Firebase's `/__/auth/*` handler, which keeps the whole
  * redirect first-party and avoids the third-party-storage completion race that
- * Safari/iOS hits when the handler lives on another origin. See worker.js.
+ * Safari/iOS hits when the handler lives on another origin. See web/wrangler.jsonc.
  *
  * Two things must be true in the Firebase/Google consoles for that to work, and
  * neither is code: `dashboardius.com` must be an authorised Firebase Auth
