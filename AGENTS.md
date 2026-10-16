@@ -12,7 +12,7 @@ web/                Angular 22 + PrimeNG application, plus the Cloudflare Worker
   src/app/dashboard/ui/       the board, cards and chrome
   src/app/dashboard/charts/   Chart.js configuration (pure functions)
   src/app/auth/               Firebase auth, lazily loaded
-  worker.js, wrangler.jsonc   the edge
+  wrangler.jsonc (assets-only)  the edge config; public/_headers = headers
 docs/                         architecture notes and the implementation record
 ```
 

@@ -51,10 +51,15 @@ check('demo data is labelled', html.includes('Sample data'));
 check('canonical URL points at the apex', html.includes('href="https://dashboardius.com/"'));
 check('a chart ships its table twin', html.includes('<table'));
 
-// The Firebase auth handler is reverse-proxied by the Worker. Sign-in is broken
-// without it, and nothing else on the page would reveal that.
+// The Firebase auth handler is reverse-proxied by the sneat-firebase-auth-proxy
+// zone route. Sign-in is broken without it, and nothing else on the page would
+// reveal that. This site's SPA fallback answers unknown paths with 200 HTML, so
+// a status check alone cannot tell the proxy from the fallback: require JS.
 const auth = await fetch(`${base}/__/auth/iframe.js`, { redirect: 'manual' });
-check(`/__/auth/* is proxied (got ${auth.status})`, auth.status > 0 && auth.status < 500);
+check(
+  `/__/auth/* is proxied, not the SPA fallback (got ${auth.status} ${auth.headers.get('content-type')})`,
+  auth.status > 0 && auth.status < 500 && !(auth.headers.get('content-type') ?? '').includes('text/html'),
+);
 
 // A deep link must reach the app, not a 404 page.
 const deep = await fetch(`${base}/anything/not/real`, { redirect: 'follow' });

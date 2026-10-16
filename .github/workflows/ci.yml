@@ -52,9 +52,9 @@ jobs:
       # hydrated page looks like.
       - name: Check the prerendered homepage
         run: pnpm exec playwright test e2e/prerender.spec.ts --project=chromium
-      # A broken Worker or wrangler config should fail on the pull request, not
+      # A broken wrangler config should fail on the pull request, not
       # at the moment of deploying to the live domain.
-      - name: Validate the Worker and its config
+      - name: Validate the wrangler config
         run: pnpm exec wrangler deploy --dry-run --config wrangler.jsonc
 
   e2e:
