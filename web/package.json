@@ -2,7 +2,7 @@
   "name": "@dashboardius/web",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@11.28.10",
+  "packageManager": "pnpm@11.28.11",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -20,17 +20,17 @@
     "prebuild": "node scripts/write-primeui-license.mjs"
   },
   "dependencies": {
-    "@angular/cdk": "22.2.5",
-    "@angular/common": "22.2.4",
-    "@angular/compiler": "22.2.4",
-    "@angular/core": "22.2.4",
-    "@angular/forms": "22.2.4",
-    "@angular/platform-browser": "22.2.4",
-    "@angular/platform-server": "22.2.4",
-    "@angular/router": "22.2.4",
-    "@angular/ssr": "22.2.5",
+    "@angular/cdk": "22.2.6",
+    "@angular/common": "22.2.5",
+    "@angular/compiler": "22.2.5",
+    "@angular/core": "22.2.5",
+    "@angular/forms": "22.2.5",
+    "@angular/platform-browser": "22.2.5",
+    "@angular/platform-server": "22.2.5",
+    "@angular/router": "22.2.5",
+    "@angular/ssr": "22.2.6",
     "@primeuix/themes": "3.1.0",
-    "ag-grid-community": "36.2.0",
+    "ag-grid-community": "36.3.0",
     "chart.js": "4.6.1",
     "firebase": "12.19.0",
     "primeng": "22.1.4",
@@ -39,16 +39,16 @@
     "tslib": "2.9.1"
   },
   "devDependencies": {
-    "@angular/build": "22.2.5",
-    "@angular/cli": "22.2.5",
-    "@angular/compiler-cli": "22.2.4",
-    "@playwright/test": "1.64.1",
+    "@angular/build": "22.2.6",
+    "@angular/cli": "22.2.6",
+    "@angular/compiler-cli": "22.2.5",
+    "@playwright/test": "1.65.0",
     "@types/node": "24.19.2",
     "@types/tabulator-tables": "6.3.6",
     "jsdom": "28.1.0",
     "prettier": "3.9.10",
     "typescript": "6.0.3",
     "vitest": "4.1.12",
-    "wrangler": "4.156.0"
+    "wrangler": "4.158.0"
   }
 }
