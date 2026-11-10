@@ -61,10 +61,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
         <div class="colophon">
           <p>
-            A <a href="https://sneat.co" rel="noopener">Sneat</a> product, alongside
+            A <a href="https://sneat.co" rel="noopener">Sneat platform</a> product, alongside
             <a href="https://datatug.app" rel="noopener">DataTug</a>.
           </p>
           <p>
+            <a href="/about/tech-stack/">Tech stack</a> ·
             <a href="https://github.com/sneat-co/dashboardius" rel="noopener">Source on GitHub</a>
           </p>
         </div>

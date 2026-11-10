@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How Dashboardius is built — tech stack</title>
+  <meta name="description" content="How Dashboardius uses Angular, chart and grid libraries, and a local prototype board model to turn data into a dashboard.">
+  <link rel="canonical" href="https://dashboardius.com/about/tech-stack/">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"AboutPage","name":"How Dashboardius is built","url":"https://dashboardius.com/about/tech-stack/","inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://dashboardius.com/"},{"@type":"ListItem","position":2,"name":"Tech stack","item":"https://dashboardius.com/about/tech-stack/"}]}]}</script>
+  <style>
+    :root { color-scheme: light dark; font: 16px/1.65 system-ui, sans-serif; background: #f7f6f3; color: #20272c; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a { color: #165d63; text-underline-offset: 3px; }
+    header, footer { border-block: 1px solid #d9dcdb; background: #efefec; }
+    header { border-top: 0; }
+    .wrap { max-width: 780px; margin: auto; padding: 1.25rem 1.5rem; }
+    header .wrap, footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; }
+    main { padding-block: 3rem 5rem; }
+    h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; margin: .5rem 0 1.5rem; }
+    h2 { font-size: 1.3rem; margin: 2.3rem 0 .5rem; }
+    p { max-width: 68ch; }
+    .eyebrow { font-size: .8rem; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: #426d70; }
+    .lede { font-size: 1.15rem; }
+    @media (prefers-color-scheme: dark) { :root { background: #14161a; color: #eee; } header, footer { background: #1e2227; border-color: #343a40; } a { color: #7ecbd0; } .eyebrow { color: #9bd6d9; } }
+  </style>
+</head>
+<body>
+  <header><div class="wrap"><strong>Dashboardius</strong><nav aria-label="Primary"><a href="/">Try the board</a> · <a href="https://datatug.app/">DataTug</a></nav></div></header>
+  <main class="wrap">
+    <nav aria-label="Breadcrumb"><a href="/">Home</a> / Tech stack</nav>
+    <p class="eyebrow">Inside the board</p>
+    <h1>The technology behind Dashboardius</h1>
+    <p class="lede">A tech stack is the languages, libraries and services used to build a product. Dashboardius brings charts, tables and narrative cards into one board, with a prototype model inspired by DataTug's board design.</p>
+    <h2>The interface</h2><p>Angular renders the interactive board. Angular CDK handles card movement; Chart.js draws visual trends; AG Grid and Tabulator display query-shaped tables. PrimeNG supplies bounded interface controls. Each library has a specific job, while the board keeps cards in one twelve-column layout.</p>
+    <h2>The data model</h2><p>The current public board is an in-memory demonstration with invented numbers, and labels them as demo data. Its card definition is local to this prototype; DataTug owns the durable board contract. Real saving, sharing, GitHub commits and a persistent dashboard service are still planned.</p>
+    <h2>This website</h2><p>The homepage is prerendered to HTML at build time and then hydrated for interaction. Cloudflare Workers static assets serve it; there is no Dashboardius backend in the current release.</p>
+    <h2>Related projects</h2><p><a href="https://datatug.app/en/about/tech-stack/">DataTug</a> is the data and query foundation. Inspect the <a href="https://github.com/sneat-co/dashboardius">Dashboardius source</a> for the prototype board and its components.</p>
+  </main>
+  <footer><div class="wrap"><span>Dashboardius · a Sneat platform product</span><nav aria-label="Footer"><a href="/">Try the board</a> · <a href="/about/tech-stack/">Tech stack</a></nav></div></footer>
+</body>
+</html>
