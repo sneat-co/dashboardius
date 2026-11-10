@@ -50,5 +50,10 @@
     "typescript": "6.0.3",
     "vitest": "4.1.10",
     "wrangler": "4.129.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "js-yaml": "4.3.2"
+    }
   }
 }
